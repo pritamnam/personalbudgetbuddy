@@ -71,7 +71,7 @@ function GoalsPage() {
             className="field"
             type="number"
             min="0"
-            placeholder="Target"
+            placeholder={`Target (${symbol})`}
             value={form.target}
             onChange={(e) => setForm({ ...form, target: e.target.value })}
           />
@@ -119,13 +119,13 @@ function GoalsPage() {
                 <p className="text-sm text-muted-foreground">{cheer(pct)}</p>
                 <div className="flex flex-wrap gap-2">
                   <button className="btn-ghost" onClick={() => deposit(g.id, 50)}>
-                    + $50
+                    + {symbol}50
                   </button>
                   <button className="btn-ghost" onClick={() => deposit(g.id, 100)}>
-                    + $100
+                    + {symbol}100
                   </button>
                   <button className="btn-ghost" onClick={() => deposit(g.id, -50)}>
-                    − $50
+                    − {symbol}50
                   </button>
                   <button
                     className="btn-ghost"
