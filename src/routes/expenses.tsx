@@ -14,9 +14,9 @@ import {
 export const Route = createFileRoute("/expenses")({
   head: () => ({
     meta: [
-      { title: "Expenses — Ledgerly" },
+      { title: "Expenses — SpendSmart" },
       { name: "description", content: "Add, edit and delete daily expenses by category." },
-      { property: "og:title", content: "Expenses — Ledgerly" },
+      { property: "og:title", content: "Expenses — SpendSmart" },
       {
         property: "og:description",
         content: "Add, edit and delete daily expenses by category.",

@@ -78,12 +78,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ledgerly — Personal Finance Tracker" },
+      { title: "SpendSmart — Personal Finance Tracker" },
       {
         name: "description",
         content: "Track expenses, plan budgets, grow savings goals and stay on top of bills.",
       },
-      { property: "og:title", content: "Ledgerly — Personal Finance Tracker" },
+      { property: "og:title", content: "SpendSmart — Personal Finance Tracker" },
       {
         property: "og:description",
         content: "Track expenses, plan budgets, grow savings goals and stay on top of bills.",
@@ -135,7 +135,7 @@ function SiteNav() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
         <Link to="/" className="font-display text-lg font-semibold text-primary">
-          Ledgerly
+          SpendSmart
         </Link>
         <nav className="flex flex-1 flex-wrap items-center gap-1 text-sm">
           {NAV.map((item) => (
@@ -169,7 +169,7 @@ function RootComponent() {
             <Outlet />
           </main>
           <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-            Ledgerly · your data stays in this browser
+            SpendSmart · your data stays in this browser
           </footer>
         </div>
       </CurrencyProvider>

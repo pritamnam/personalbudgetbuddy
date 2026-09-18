@@ -7,9 +7,9 @@ import { uid, useTasks, type Task } from "@/lib/finance";
 export const Route = createFileRoute("/reminders")({
   head: () => ({
     meta: [
-      { title: "Reminders — Ledgerly" },
+      { title: "Reminders — SpendSmart" },
       { name: "description", content: "A simple to-do list for bills and money tasks." },
-      { property: "og:title", content: "Reminders — Ledgerly" },
+      { property: "og:title", content: "Reminders — SpendSmart" },
       { property: "og:description", content: "A simple to-do list for bills and money tasks." },
     ],
   }),

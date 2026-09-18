@@ -8,9 +8,9 @@ import { CATEGORIES, monthKey, thisMonth, useBudgets, useExpenses } from "@/lib/
 export const Route = createFileRoute("/budgets")({
   head: () => ({
     meta: [
-      { title: "Budgets — Ledgerly" },
+      { title: "Budgets — SpendSmart" },
       { name: "description", content: "Set monthly budgets per category and watch usage live." },
-      { property: "og:title", content: "Budgets — Ledgerly" },
+      { property: "og:title", content: "Budgets — SpendSmart" },
       {
         property: "og:description",
         content: "Set monthly budgets per category and watch usage live.",
