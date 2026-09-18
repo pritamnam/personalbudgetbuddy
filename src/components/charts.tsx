@@ -109,13 +109,21 @@ export function BudgetBars({
             { label: "Budget", data: limits, backgroundColor: "#e0a13c80", borderRadius: 6 },
           ],
         }}
-        options={{ ...base, scales: { y: { beginAtZero: true, grid: { color: "#0000000d" } }, x: { grid: { display: false } } } }}
+        options={{ ...base, plugins: moneyPlugins(currency), scales: moneyAxis(currency) }}
       />
     </div>
   );
 }
 
-export function TrendLine({ labels, data }: { labels: string[]; data: number[] }) {
+export function TrendLine({
+  labels,
+  data,
+  currency = "USD",
+}: {
+  labels: string[];
+  data: number[];
+  currency?: string;
+}) {
   return (
     <div className="h-72">
       <Line
@@ -133,7 +141,7 @@ export function TrendLine({ labels, data }: { labels: string[]; data: number[] }
             },
           ],
         }}
-        options={{ ...base, scales: { y: { beginAtZero: true, grid: { color: "#0000000d" } }, x: { grid: { display: false } } } }}
+        options={{ ...base, plugins: moneyPlugins(currency), scales: moneyAxis(currency) }}
       />
     </div>
   );
