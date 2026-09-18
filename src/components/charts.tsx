@@ -43,7 +43,7 @@ const moneyPlugins = (currency: string) => ({
   ...base.plugins,
   tooltip: {
     callbacks: {
-      label: (ctx: { dataset: { label?: string }; parsed: { y?: number } | number }) => {
+      label: (ctx: { dataset: { label?: string | undefined }; parsed: { y?: number | undefined } | number }) => {
         const raw = typeof ctx.parsed === "number" ? ctx.parsed : (ctx.parsed.y ?? 0);
         const name = ctx.dataset.label ? `${ctx.dataset.label}: ` : "";
         return `${name}${fmt(currency)(raw)}`;
