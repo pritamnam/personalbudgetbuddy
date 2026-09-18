@@ -61,7 +61,17 @@ const moneyAxis = (currency: string) => ({
   x: { grid: { display: false } },
 });
 
-export function CategoryPie({ labels, data, colors }: { labels: string[]; data: number[]; colors: string[] }) {
+export function CategoryPie({
+  labels,
+  data,
+  colors,
+  currency = "USD",
+}: {
+  labels: string[];
+  data: number[];
+  colors: string[];
+  currency?: string;
+}) {
   return (
     <div className="h-72">
       <Pie
@@ -69,7 +79,10 @@ export function CategoryPie({ labels, data, colors }: { labels: string[]; data: 
           labels,
           datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: "#ffffff" }],
         }}
-        options={{ ...base, plugins: { ...base.plugins, legend: { position: "right" as const } } }}
+        options={{
+          ...base,
+          plugins: { ...moneyPlugins(currency), legend: { position: "right" as const } },
+        }}
       />
     </div>
   );
@@ -79,10 +92,12 @@ export function BudgetBars({
   labels,
   spent,
   limits,
+  currency = "USD",
 }: {
   labels: string[];
   spent: number[];
   limits: number[];
+  currency?: string;
 }) {
   return (
     <div className="h-72">
