@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 
 import { Card, PageHeader, Progress, StatCard } from "@/components/ui-kit";
-import { CATEGORIES, currency, monthKey, thisMonth, useBudgets, useExpenses } from "@/lib/finance";
+import { useCurrency } from "@/lib/currency";
+import { CATEGORIES, monthKey, thisMonth, useBudgets, useExpenses } from "@/lib/finance";
 
 export const Route = createFileRoute("/budgets")({
   head: () => ({
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/budgets")({
 function BudgetsPage() {
   const { value: budgets, setValue: setBudgets } = useBudgets();
   const { value: expenses } = useExpenses();
+  const { format: currency, symbol } = useCurrency();
 
   const spentByCategory = useMemo(() => {
     const map = new Map<string, number>();
@@ -68,7 +70,7 @@ function BudgetsPage() {
                   </p>
                 </div>
                 <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                  Monthly limit
+                  Monthly limit ({symbol})
                   <input
                     className="field max-w-30"
                     type="number"

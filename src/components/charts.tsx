@@ -32,7 +32,46 @@ const base = {
   },
 };
 
-export function CategoryPie({ labels, data, colors }: { labels: string[]; data: number[]; colors: string[] }) {
+const fmt = (currency: string) => (n: number) =>
+  n.toLocaleString(undefined, {
+    style: "currency",
+    currency,
+    maximumFractionDigits: currency === "JPY" ? 0 : 2,
+  });
+
+const moneyPlugins = (currency: string) => ({
+  ...base.plugins,
+  tooltip: {
+    callbacks: {
+      label: (ctx: { dataset: { label?: string | undefined }; parsed: { y?: number | null | undefined } | number }) => {
+        const raw = typeof ctx.parsed === "number" ? ctx.parsed : (ctx.parsed.y ?? 0);
+        const name = ctx.dataset.label ? `${ctx.dataset.label}: ` : "";
+        return `${name}${fmt(currency)(raw)}`;
+      },
+    },
+  },
+});
+
+const moneyAxis = (currency: string) => ({
+  y: {
+    beginAtZero: true,
+    grid: { color: "#0000000d" },
+    ticks: { callback: (v: string | number) => fmt(currency)(Number(v)) },
+  },
+  x: { grid: { display: false } },
+});
+
+export function CategoryPie({
+  labels,
+  data,
+  colors,
+  currency = "USD",
+}: {
+  labels: string[];
+  data: number[];
+  colors: string[];
+  currency?: string;
+}) {
   return (
     <div className="h-72">
       <Pie
@@ -40,7 +79,10 @@ export function CategoryPie({ labels, data, colors }: { labels: string[]; data: 
           labels,
           datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: "#ffffff" }],
         }}
-        options={{ ...base, plugins: { ...base.plugins, legend: { position: "right" as const } } }}
+        options={{
+          ...base,
+          plugins: { ...moneyPlugins(currency), legend: { position: "right" as const } },
+        }}
       />
     </div>
   );
@@ -50,10 +92,12 @@ export function BudgetBars({
   labels,
   spent,
   limits,
+  currency = "USD",
 }: {
   labels: string[];
   spent: number[];
   limits: number[];
+  currency?: string;
 }) {
   return (
     <div className="h-72">
@@ -65,13 +109,21 @@ export function BudgetBars({
             { label: "Budget", data: limits, backgroundColor: "#e0a13c80", borderRadius: 6 },
           ],
         }}
-        options={{ ...base, scales: { y: { beginAtZero: true, grid: { color: "#0000000d" } }, x: { grid: { display: false } } } }}
+        options={{ ...base, plugins: moneyPlugins(currency), scales: moneyAxis(currency) }}
       />
     </div>
   );
 }
 
-export function TrendLine({ labels, data }: { labels: string[]; data: number[] }) {
+export function TrendLine({
+  labels,
+  data,
+  currency = "USD",
+}: {
+  labels: string[];
+  data: number[];
+  currency?: string;
+}) {
   return (
     <div className="h-72">
       <Line
@@ -89,7 +141,7 @@ export function TrendLine({ labels, data }: { labels: string[]; data: number[] }
             },
           ],
         }}
-        options={{ ...base, scales: { y: { beginAtZero: true, grid: { color: "#0000000d" } }, x: { grid: { display: false } } } }}
+        options={{ ...base, plugins: moneyPlugins(currency), scales: moneyAxis(currency) }}
       />
     </div>
   );

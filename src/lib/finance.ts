@@ -107,8 +107,6 @@ export const useBudgets = () => useLocalState<Budget[]>("pf.budgets", seedBudget
 export const useGoals = () => useLocalState<Goal[]>("pf.goals", seedGoals);
 export const useTasks = () => useLocalState<Task[]>("pf.tasks", seedTasks);
 
-export const currency = (n: number) =>
-  n.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 2 });
 
 export const monthKey = (d: string) => d.slice(0, 7);
 export const thisMonth = iso(today).slice(0, 7);

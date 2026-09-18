@@ -2,10 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useMemo } from "react";
 
 import { Card, PageHeader, Progress, StatCard, useHydrated } from "@/components/ui-kit";
+import { useCurrency } from "@/lib/currency";
 import {
   CATEGORIES,
   chartColors,
-  currency,
   monthKey,
   thisMonth,
   useBudgets,
@@ -48,6 +48,7 @@ const ChartFallback = () => (
 
 function Dashboard() {
   const hydrated = useHydrated();
+  const { format: currency, code: currencyCode } = useCurrency();
   const { value: expenses } = useExpenses();
   const { value: budgets } = useBudgets();
   const { value: goals } = useGoals();
@@ -126,6 +127,7 @@ function Dashboard() {
                 labels={pieRows.map((r) => r.category)}
                 data={pieRows.map((r) => Number(r.spent.toFixed(2)))}
                 colors={chartColors.slice(0, pieRows.length)}
+                currency={currencyCode}
               />
             </Suspense>
           ) : (
@@ -141,6 +143,7 @@ function Dashboard() {
                 labels={byCategory.map((r) => r.category)}
                 spent={byCategory.map((r) => Number(r.spent.toFixed(2)))}
                 limits={byCategory.map((r) => r.limit)}
+                currency={currencyCode}
               />
             </Suspense>
           ) : (
@@ -156,6 +159,7 @@ function Dashboard() {
             <TrendLine
               labels={trend.map((t) => t.label)}
               data={trend.map((t) => Number(t.total.toFixed(2)))}
+              currency={currencyCode}
             />
           </Suspense>
         ) : (

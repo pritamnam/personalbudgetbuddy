@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { Card, EmptyState, PageHeader, Progress } from "@/components/ui-kit";
-import { currency, uid, useGoals, type Goal } from "@/lib/finance";
+import { useCurrency } from "@/lib/currency";
+import { uid, useGoals, type Goal } from "@/lib/finance";
 
 export const Route = createFileRoute("/goals")({
   head: () => ({
@@ -29,6 +30,7 @@ function cheer(pct: number) {
 
 function GoalsPage() {
   const { value: goals, setValue: setGoals } = useGoals();
+  const { format: currency, symbol } = useCurrency();
   const [form, setForm] = useState({ name: "", target: "", saved: "", deadline: "" });
 
   function addGoal(event: React.FormEvent) {
@@ -69,7 +71,7 @@ function GoalsPage() {
             className="field"
             type="number"
             min="0"
-            placeholder="Target"
+            placeholder={`Target (${symbol})`}
             value={form.target}
             onChange={(e) => setForm({ ...form, target: e.target.value })}
           />
@@ -117,13 +119,13 @@ function GoalsPage() {
                 <p className="text-sm text-muted-foreground">{cheer(pct)}</p>
                 <div className="flex flex-wrap gap-2">
                   <button className="btn-ghost" onClick={() => deposit(g.id, 50)}>
-                    + $50
+                    + {symbol}50
                   </button>
                   <button className="btn-ghost" onClick={() => deposit(g.id, 100)}>
-                    + $100
+                    + {symbol}100
                   </button>
                   <button className="btn-ghost" onClick={() => deposit(g.id, -50)}>
-                    − $50
+                    − {symbol}50
                   </button>
                   <button
                     className="btn-ghost"

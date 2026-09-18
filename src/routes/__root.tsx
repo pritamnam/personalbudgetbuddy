@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { CurrencyProvider, CurrencySelect } from "../lib/currency";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -149,6 +150,7 @@ function SiteNav() {
             </Link>
           ))}
         </nav>
+        <CurrencySelect />
       </div>
     </header>
   );
@@ -159,16 +161,18 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen">
-        <SiteNav />
-        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-        </main>
-        <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-          Ledgerly · your data stays in this browser
-        </footer>
-      </div>
+      <CurrencyProvider>
+        <div className="min-h-screen">
+          <SiteNav />
+          <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </main>
+          <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
+            Ledgerly · your data stays in this browser
+          </footer>
+        </div>
+      </CurrencyProvider>
     </QueryClientProvider>
   );
 }
