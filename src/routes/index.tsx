@@ -2,10 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useMemo } from "react";
 
 import { Card, PageHeader, Progress, StatCard, useHydrated } from "@/components/ui-kit";
+import { useCurrency } from "@/lib/currency";
 import {
   CATEGORIES,
   chartColors,
-  currency,
   monthKey,
   thisMonth,
   useBudgets,
@@ -48,6 +48,7 @@ const ChartFallback = () => (
 
 function Dashboard() {
   const hydrated = useHydrated();
+  const { format: currency, code: currencyCode } = useCurrency();
   const { value: expenses } = useExpenses();
   const { value: budgets } = useBudgets();
   const { value: goals } = useGoals();

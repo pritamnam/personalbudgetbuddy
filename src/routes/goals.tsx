@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { Card, EmptyState, PageHeader, Progress } from "@/components/ui-kit";
-import { currency, uid, useGoals, type Goal } from "@/lib/finance";
+import { useCurrency } from "@/lib/currency";
+import { uid, useGoals, type Goal } from "@/lib/finance";
 
 export const Route = createFileRoute("/goals")({
   head: () => ({
@@ -29,6 +30,7 @@ function cheer(pct: number) {
 
 function GoalsPage() {
   const { value: goals, setValue: setGoals } = useGoals();
+  const { format: currency, symbol } = useCurrency();
   const [form, setForm] = useState({ name: "", target: "", saved: "", deadline: "" });
 
   function addGoal(event: React.FormEvent) {

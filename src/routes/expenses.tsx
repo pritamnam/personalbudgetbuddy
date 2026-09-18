@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
 import { Card, EmptyState, PageHeader } from "@/components/ui-kit";
+import { useCurrency } from "@/lib/currency";
 import {
   CATEGORIES,
-  currency,
   useExpenses,
   uid,
   type Category,
@@ -35,6 +35,7 @@ const emptyForm = {
 
 function ExpensesPage() {
   const { value: expenses, setValue: setExpenses } = useExpenses();
+  const { format: currency, symbol } = useCurrency();
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"All" | Category>("All");
@@ -96,7 +97,7 @@ function ExpensesPage() {
             type="number"
             min="0"
             step="0.01"
-            placeholder="Amount"
+            placeholder={`Amount (${symbol})`}
             value={form.amount}
             onChange={(e) => setForm({ ...form, amount: e.target.value })}
           />
