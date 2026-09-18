@@ -8,9 +8,9 @@ import { uid, useGoals, type Goal } from "@/lib/finance";
 export const Route = createFileRoute("/goals")({
   head: () => ({
     meta: [
-      { title: "Savings goals — Ledgerly" },
+      { title: "Savings goals — SpendSmart" },
       { name: "description", content: "Define savings targets and track motivating progress." },
-      { property: "og:title", content: "Savings goals — Ledgerly" },
+      { property: "og:title", content: "Savings goals — SpendSmart" },
       {
         property: "og:description",
         content: "Define savings targets and track motivating progress.",

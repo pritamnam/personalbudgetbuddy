@@ -25,13 +25,13 @@ const TrendLine = lazy(() => import("@/components/charts").then((m) => ({ defaul
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Dashboard — Ledgerly Personal Finance Tracker" },
+      { title: "Dashboard — SpendSmart Personal Finance Tracker" },
       {
         name: "description",
         content:
           "See spending by category, budget usage, savings progress and upcoming bills at a glance.",
       },
-      { property: "og:title", content: "Dashboard — Ledgerly Personal Finance Tracker" },
+      { property: "og:title", content: "Dashboard — SpendSmart Personal Finance Tracker" },
       {
         property: "og:description",
         content:
