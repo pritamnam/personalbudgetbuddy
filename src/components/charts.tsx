@@ -32,6 +32,35 @@ const base = {
   },
 };
 
+const fmt = (currency: string) => (n: number) =>
+  n.toLocaleString(undefined, {
+    style: "currency",
+    currency,
+    maximumFractionDigits: currency === "JPY" ? 0 : 2,
+  });
+
+const moneyPlugins = (currency: string) => ({
+  ...base.plugins,
+  tooltip: {
+    callbacks: {
+      label: (ctx: { dataset: { label?: string }; parsed: { y?: number } | number }) => {
+        const raw = typeof ctx.parsed === "number" ? ctx.parsed : (ctx.parsed.y ?? 0);
+        const name = ctx.dataset.label ? `${ctx.dataset.label}: ` : "";
+        return `${name}${fmt(currency)(raw)}`;
+      },
+    },
+  },
+});
+
+const moneyAxis = (currency: string) => ({
+  y: {
+    beginAtZero: true,
+    grid: { color: "#0000000d" },
+    ticks: { callback: (v: string | number) => fmt(currency)(Number(v)) },
+  },
+  x: { grid: { display: false } },
+});
+
 export function CategoryPie({ labels, data, colors }: { labels: string[]; data: number[]; colors: string[] }) {
   return (
     <div className="h-72">
