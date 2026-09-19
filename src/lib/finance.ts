@@ -107,6 +107,34 @@ export const useBudgets = () => useLocalState<Budget[]>("pf.budgets", seedBudget
 export const useGoals = () => useLocalState<Goal[]>("pf.goals", seedGoals);
 export const useTasks = () => useLocalState<Task[]>("pf.tasks", seedTasks);
 
+/**
+ * Convert every stored money amount from one currency to another.
+ * `rates` maps currency code -> units per 1 USD.
+ */
+export function convertStoredAmounts(from: string, to: string, rates: Record<string, number>) {
+  const fromRate = rates[from];
+  const toRate = rates[to];
+  if (!fromRate || !toRate || from === to) return;
+  const factor = toRate / fromRate;
+  const round = (n: number) => Math.round(n * factor * 100) / 100;
+
+  const convert = <T>(key: string, map: (item: T) => T) => {
+    try {
+      const raw = window.localStorage.getItem(key);
+      if (!raw) return;
+      const items = JSON.parse(raw) as T[];
+      if (!Array.isArray(items)) return;
+      window.localStorage.setItem(key, JSON.stringify(items.map(map)));
+    } catch {
+      /* ignore */
+    }
+  };
+
+  convert<Expense>("pf.expenses", (e) => ({ ...e, amount: round(e.amount) }));
+  convert<Budget>("pf.budgets", (b) => ({ ...b, limit: round(b.limit) }));
+  convert<Goal>("pf.goals", (g) => ({ ...g, target: round(g.target), saved: round(g.saved) }));
+}
+
 
 export const monthKey = (d: string) => d.slice(0, 7);
 export const thisMonth = iso(today).slice(0, 7);
