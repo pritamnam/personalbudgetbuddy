@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
+
+import { supabase } from "@/integrations/supabase/client";
 
 export const CATEGORIES = [
   "Food",
@@ -75,37 +77,142 @@ export const seedTasks: Task[] = [
   { id: uid(), title: "Transfer to savings", due: daysAgo(-1), done: true },
 ];
 
-export function useLocalState<T>(key: string, initial: T) {
-  const [value, setValue] = useState<T>(initial);
-  const [ready, setReady] = useState(false);
+export type FinanceData = {
+  expenses: Expense[];
+  budgets: Budget[];
+  goals: Goal[];
+  tasks: Task[];
+};
 
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(key);
-      if (raw) setValue(JSON.parse(raw) as T);
-    } catch {
-      /* ignore */
-    }
-    setReady(true);
-  }, [key]);
+const seedData = (): FinanceData => ({
+  expenses: seedExpenses,
+  budgets: seedBudgets,
+  goals: seedGoals,
+  tasks: seedTasks,
+});
 
-  useEffect(() => {
-    if (!ready) return;
-    try {
-      window.localStorage.setItem(key, JSON.stringify(value));
-    } catch {
-      /* ignore */
-    }
-  }, [key, value, ready]);
+/* ------------------------------------------------------------------ */
+/* Per-user cloud-backed store                                         */
+/* ------------------------------------------------------------------ */
 
-  const reset = useCallback(() => setValue(initial), [initial]);
-  return { value, setValue, ready, reset };
+let state: FinanceData = seedData();
+const serverState: FinanceData = seedData();
+let currentUserId: string | null = null;
+let ready = false;
+
+const listeners = new Set<() => void>();
+const emit = () => listeners.forEach((l) => l());
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
 }
 
-export const useExpenses = () => useLocalState<Expense[]>("pf.expenses", seedExpenses);
-export const useBudgets = () => useLocalState<Budget[]>("pf.budgets", seedBudgets);
-export const useGoals = () => useLocalState<Goal[]>("pf.goals", seedGoals);
-export const useTasks = () => useLocalState<Task[]>("pf.tasks", seedTasks);
+let saveTimer: ReturnType<typeof setTimeout> | undefined;
+
+async function save() {
+  if (!currentUserId) return;
+  await supabase.from("finance_data").upsert({
+    user_id: currentUserId,
+    expenses: state.expenses,
+    budgets: state.budgets,
+    goals: state.goals,
+    tasks: state.tasks,
+    updated_at: new Date().toISOString(),
+  });
+}
+
+function scheduleSave() {
+  if (!currentUserId) return;
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    void save();
+  }, 400);
+}
+
+/** Load the signed-in user's data from the cloud (seeding a fresh account). */
+export async function loadFinanceData(userId: string) {
+  currentUserId = userId;
+  ready = false;
+  emit();
+
+  const { data } = await supabase
+    .from("finance_data")
+    .select("expenses, budgets, goals, tasks")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  const row = data as Partial<FinanceData> | null;
+  const isEmpty =
+    !row ||
+    ((row.expenses?.length ?? 0) === 0 &&
+      (row.budgets?.length ?? 0) === 0 &&
+      (row.goals?.length ?? 0) === 0 &&
+      (row.tasks?.length ?? 0) === 0);
+
+  if (isEmpty) {
+    state = seedData();
+    await save();
+  } else {
+    state = {
+      expenses: row.expenses ?? [],
+      budgets: row.budgets ?? [],
+      goals: row.goals ?? [],
+      tasks: row.tasks ?? [],
+    };
+  }
+
+  ready = true;
+  emit();
+}
+
+/** Drop in-memory data on sign-out. */
+export function clearFinanceData() {
+  if (saveTimer) clearTimeout(saveTimer);
+  currentUserId = null;
+  state = seedData();
+  ready = false;
+  emit();
+}
+
+function setField<K extends keyof FinanceData>(
+  key: K,
+  updater: FinanceData[K] | ((prev: FinanceData[K]) => FinanceData[K]),
+) {
+  const next =
+    typeof updater === "function"
+      ? (updater as (prev: FinanceData[K]) => FinanceData[K])(state[key])
+      : updater;
+  state = { ...state, [key]: next };
+  emit();
+  scheduleSave();
+}
+
+function useField<K extends keyof FinanceData>(key: K) {
+  const value = useSyncExternalStore(
+    subscribe,
+    () => state[key],
+    () => serverState[key],
+  );
+  const isReady = useSyncExternalStore(
+    subscribe,
+    () => ready,
+    () => false,
+  );
+  const setValue = useCallback(
+    (updater: FinanceData[K] | ((prev: FinanceData[K]) => FinanceData[K])) =>
+      setField(key, updater),
+    [key],
+  );
+  return { value, setValue, ready: isReady };
+}
+
+export const useExpenses = () => useField("expenses");
+export const useBudgets = () => useField("budgets");
+export const useGoals = () => useField("goals");
+export const useTasks = () => useField("tasks");
 
 /**
  * Convert every stored money amount from one currency to another.
@@ -118,23 +225,15 @@ export function convertStoredAmounts(from: string, to: string, rates: Record<str
   const factor = toRate / fromRate;
   const round = (n: number) => Math.round(n * factor * 100) / 100;
 
-  const convert = <T>(key: string, map: (item: T) => T) => {
-    try {
-      const raw = window.localStorage.getItem(key);
-      if (!raw) return;
-      const items = JSON.parse(raw) as T[];
-      if (!Array.isArray(items)) return;
-      window.localStorage.setItem(key, JSON.stringify(items.map(map)));
-    } catch {
-      /* ignore */
-    }
+  state = {
+    expenses: state.expenses.map((e) => ({ ...e, amount: round(e.amount) })),
+    budgets: state.budgets.map((b) => ({ ...b, limit: round(b.limit) })),
+    goals: state.goals.map((g) => ({ ...g, target: round(g.target), saved: round(g.saved) })),
+    tasks: state.tasks,
   };
-
-  convert<Expense>("pf.expenses", (e) => ({ ...e, amount: round(e.amount) }));
-  convert<Budget>("pf.budgets", (b) => ({ ...b, limit: round(b.limit) }));
-  convert<Goal>("pf.goals", (g) => ({ ...g, target: round(g.target), saved: round(g.saved) }));
+  emit();
+  scheduleSave();
 }
-
 
 export const monthKey = (d: string) => d.slice(0, 7);
 export const thisMonth = iso(today).slice(0, 7);
