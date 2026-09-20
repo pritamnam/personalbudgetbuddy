@@ -94,8 +94,6 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       } catch {
         /* ignore */
       }
-      // Force localStorage-backed hooks across the app to re-read converted values.
-      window.location.reload();
     },
     [rates],
   );

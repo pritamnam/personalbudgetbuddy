@@ -4,12 +4,14 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useNavigate,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { AuthProvider, signOutSafely, useAuth } from "../lib/auth";
 import { CurrencyProvider, CurrencySelect } from "../lib/currency";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -123,7 +125,7 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 const NAV = [
-  { to: "/", label: "Dashboard" },
+  { to: "/dashboard", label: "Dashboard" },
   { to: "/expenses", label: "Expenses" },
   { to: "/budgets", label: "Budgets" },
   { to: "/goals", label: "Goals" },
@@ -131,26 +133,53 @@ const NAV = [
 ] as const;
 
 function SiteNav() {
+  const { session, displayName, loading } = useAuth();
+  const navigate = useNavigate();
+  const [signingOut, setSigningOut] = useState(false);
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    try {
+      await signOutSafely();
+      await navigate({ to: "/", replace: true });
+    } finally {
+      setSigningOut(false);
+    }
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
-        <Link to="/" className="font-display text-lg font-semibold text-primary">
+        <Link to={session ? "/dashboard" : "/"} className="font-display text-lg font-semibold text-primary">
           SpendSmart
         </Link>
         <nav className="flex flex-1 flex-wrap items-center gap-1 text-sm">
-          {NAV.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              activeOptions={{ exact: item.to === "/" }}
-              className="rounded-md px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              activeProps={{ className: "bg-secondary text-secondary-foreground" }}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {session
+            ? NAV.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="rounded-md px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  activeProps={{ className: "bg-secondary text-secondary-foreground" }}
+                >
+                  {item.label}
+                </Link>
+              ))
+            : null}
         </nav>
-        <CurrencySelect />
+        {session ? <CurrencySelect /> : null}
+        {loading ? null : session ? (
+          <div className="flex items-center gap-2 text-sm">
+            <span className="hidden text-muted-foreground sm:inline">{displayName}</span>
+            <button type="button" className="btn-ghost" onClick={handleSignOut} disabled={signingOut}>
+              {signingOut ? "Signing out…" : "Sign out"}
+            </button>
+          </div>
+        ) : (
+          <Link to="/auth" className="btn-primary">
+            Sign in
+          </Link>
+        )}
       </div>
     </header>
   );
@@ -161,18 +190,20 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CurrencyProvider>
-        <div className="min-h-screen">
-          <SiteNav />
-          <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
-            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-            <Outlet />
-          </main>
-          <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-            SpendSmart · your data stays in this browser
-          </footer>
-        </div>
-      </CurrencyProvider>
+      <AuthProvider>
+        <CurrencyProvider>
+          <div className="min-h-screen">
+            <SiteNav />
+            <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+              {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+              <Outlet />
+            </main>
+            <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
+              SpendSmart · private to your account
+            </footer>
+          </div>
+        </CurrencyProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
