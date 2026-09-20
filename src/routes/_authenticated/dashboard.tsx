@@ -22,7 +22,7 @@ const BudgetBars = lazy(() =>
 );
 const TrendLine = lazy(() => import("@/components/charts").then((m) => ({ default: m.TrendLine })));
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — SpendSmart Personal Finance Tracker" },

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, EmptyState, PageHeader } from "@/components/ui-kit";
 import { uid, useTasks, type Task } from "@/lib/finance";
 
-export const Route = createFileRoute("/reminders")({
+export const Route = createFileRoute("/_authenticated/reminders")({
   head: () => ({
     meta: [
       { title: "Reminders — SpendSmart" },

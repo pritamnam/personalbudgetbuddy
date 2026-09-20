@@ -11,7 +11,7 @@ import {
   type Expense,
 } from "@/lib/finance";
 
-export const Route = createFileRoute("/expenses")({
+export const Route = createFileRoute("/_authenticated/expenses")({
   head: () => ({
     meta: [
       { title: "Expenses — SpendSmart" },

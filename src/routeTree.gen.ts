@@ -10,73 +10,91 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as BudgetsRouteImport } from './routes/budgets'
-import { Route as ExpensesRouteImport } from './routes/expenses'
-import { Route as GoalsRouteImport } from './routes/goals'
-import { Route as RemindersRouteImport } from './routes/reminders'
+import { Route as AuthenticatedBudgetsRouteImport } from './routes/_authenticated/budgets'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedExpensesRouteImport } from './routes/_authenticated/expenses'
+import { Route as AuthenticatedGoalsRouteImport } from './routes/_authenticated/goals'
+import { Route as AuthenticatedRemindersRouteImport } from './routes/_authenticated/reminders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BudgetsRoute = BudgetsRouteImport.update({
-  id: '/budgets',
+const AuthenticatedBudgetsRoute = AuthenticatedBudgetsRouteImport.update({
+  id: '/_authenticated/budgets',
   path: '/budgets',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExpensesRoute = ExpensesRouteImport.update({
-  id: '/expenses',
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/_authenticated/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedExpensesRoute = AuthenticatedExpensesRouteImport.update({
+  id: '/_authenticated/expenses',
   path: '/expenses',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GoalsRoute = GoalsRouteImport.update({
-  id: '/goals',
+const AuthenticatedGoalsRoute = AuthenticatedGoalsRouteImport.update({
+  id: '/_authenticated/goals',
   path: '/goals',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RemindersRoute = RemindersRouteImport.update({
-  id: '/reminders',
+const AuthenticatedRemindersRoute = AuthenticatedRemindersRouteImport.update({
+  id: '/_authenticated/reminders',
   path: '/reminders',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/budgets': typeof BudgetsRoute
-  '/expenses': typeof ExpensesRoute
-  '/goals': typeof GoalsRoute
-  '/reminders': typeof RemindersRoute
+  '/budgets': typeof AuthenticatedBudgetsRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/expenses': typeof AuthenticatedExpensesRoute
+  '/goals': typeof AuthenticatedGoalsRoute
+  '/reminders': typeof AuthenticatedRemindersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/budgets': typeof BudgetsRoute
-  '/expenses': typeof ExpensesRoute
-  '/goals': typeof GoalsRoute
-  '/reminders': typeof RemindersRoute
+  '/budgets': typeof AuthenticatedBudgetsRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/expenses': typeof AuthenticatedExpensesRoute
+  '/goals': typeof AuthenticatedGoalsRoute
+  '/reminders': typeof AuthenticatedRemindersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/budgets': typeof BudgetsRoute
-  '/expenses': typeof ExpensesRoute
-  '/goals': typeof GoalsRoute
-  '/reminders': typeof RemindersRoute
+  '/_authenticated/budgets': typeof AuthenticatedBudgetsRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/expenses': typeof AuthenticatedExpensesRoute
+  '/_authenticated/goals': typeof AuthenticatedGoalsRoute
+  '/_authenticated/reminders': typeof AuthenticatedRemindersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/budgets' | '/expenses' | '/goals' | '/reminders'
+  fullPaths:
+    '/' | '/budgets' | '/dashboard' | '/expenses' | '/goals' | '/reminders'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/budgets' | '/expenses' | '/goals' | '/reminders'
-  id: '__root__' | '/' | '/budgets' | '/expenses' | '/goals' | '/reminders'
+  to: '/' | '/budgets' | '/dashboard' | '/expenses' | '/goals' | '/reminders'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated/budgets'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/expenses'
+    | '/_authenticated/goals'
+    | '/_authenticated/reminders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  BudgetsRoute: typeof BudgetsRoute
-  ExpensesRoute: typeof ExpensesRoute
-  GoalsRoute: typeof GoalsRoute
-  RemindersRoute: typeof RemindersRoute
+  AuthenticatedBudgetsRoute: typeof AuthenticatedBudgetsRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedExpensesRoute: typeof AuthenticatedExpensesRoute
+  AuthenticatedGoalsRoute: typeof AuthenticatedGoalsRoute
+  AuthenticatedRemindersRoute: typeof AuthenticatedRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -88,32 +106,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/budgets': {
-      id: '/budgets'
+    '/_authenticated/budgets': {
+      id: '/_authenticated/budgets'
       path: '/budgets'
       fullPath: '/budgets'
-      preLoaderRoute: typeof BudgetsRouteImport
+      preLoaderRoute: typeof AuthenticatedBudgetsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/expenses': {
-      id: '/expenses'
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/expenses': {
+      id: '/_authenticated/expenses'
       path: '/expenses'
       fullPath: '/expenses'
-      preLoaderRoute: typeof ExpensesRouteImport
+      preLoaderRoute: typeof AuthenticatedExpensesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/goals': {
-      id: '/goals'
+    '/_authenticated/goals': {
+      id: '/_authenticated/goals'
       path: '/goals'
       fullPath: '/goals'
-      preLoaderRoute: typeof GoalsRouteImport
+      preLoaderRoute: typeof AuthenticatedGoalsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/reminders': {
-      id: '/reminders'
+    '/_authenticated/reminders': {
+      id: '/_authenticated/reminders'
       path: '/reminders'
       fullPath: '/reminders'
-      preLoaderRoute: typeof RemindersRouteImport
+      preLoaderRoute: typeof AuthenticatedRemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -121,10 +146,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  BudgetsRoute: BudgetsRoute,
-  ExpensesRoute: ExpensesRoute,
-  GoalsRoute: GoalsRoute,
-  RemindersRoute: RemindersRoute,
+  AuthenticatedBudgetsRoute: AuthenticatedBudgetsRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedExpensesRoute: AuthenticatedExpensesRoute,
+  AuthenticatedGoalsRoute: AuthenticatedGoalsRoute,
+  AuthenticatedRemindersRoute: AuthenticatedRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
