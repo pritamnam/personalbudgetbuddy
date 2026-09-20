@@ -5,7 +5,7 @@ import { Card, PageHeader, Progress, StatCard } from "@/components/ui-kit";
 import { useCurrency } from "@/lib/currency";
 import { CATEGORIES, monthKey, thisMonth, useBudgets, useExpenses } from "@/lib/finance";
 
-export const Route = createFileRoute("/budgets")({
+export const Route = createFileRoute("/_authenticated/budgets")({
   head: () => ({
     meta: [
       { title: "Budgets — SpendSmart" },

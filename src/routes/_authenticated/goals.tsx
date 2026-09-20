@@ -5,7 +5,7 @@ import { Card, EmptyState, PageHeader, Progress } from "@/components/ui-kit";
 import { useCurrency } from "@/lib/currency";
 import { uid, useGoals, type Goal } from "@/lib/finance";
 
-export const Route = createFileRoute("/goals")({
+export const Route = createFileRoute("/_authenticated/goals")({
   head: () => ({
     meta: [
       { title: "Savings goals — SpendSmart" },
