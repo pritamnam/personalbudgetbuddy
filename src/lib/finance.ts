@@ -168,6 +168,18 @@ export async function loadFinanceData(userId: string) {
   emit();
 }
 
+/**
+ * Load sample data for a guest visitor. Nothing is written to the cloud:
+ * `currentUserId` stays null, so every save is a no-op.
+ */
+export function startGuestData() {
+  if (saveTimer) clearTimeout(saveTimer);
+  currentUserId = null;
+  state = seedData();
+  ready = true;
+  emit();
+}
+
 /** Drop in-memory data on sign-out. */
 export function clearFinanceData() {
   if (saveTimer) clearTimeout(saveTimer);
