@@ -74,7 +74,11 @@ export function friendlyAuthError(message: string): string {
   if (m.includes("email not confirmed")) return "Please confirm your email address first, then sign in.";
   if (m.includes("already registered") || m.includes("already been registered"))
     return "An account with this email already exists. Try signing in instead.";
-  if (m.includes("password")) return "Password must be at least 6 characters.";
+  if (m.includes("weak") || m.includes("pwned"))
+    return "That password has appeared in known data breaches. Please choose a stronger one.";
+  if (m.includes("at least") || m.includes("should be"))
+    return "Password must be at least 6 characters.";
+  if (m.includes("password")) return "We couldn't accept that password. Please try another one.";
   if (m.includes("rate limit") || m.includes("too many"))
     return "Too many attempts. Please wait a moment and try again.";
   if (m.includes("invalid email") || m.includes("valid email"))
