@@ -3,6 +3,7 @@ import { useEffect, useState, type FormEvent } from "react";
 
 import { Card } from "@/components/ui-kit";
 import { friendlyAuthError, useAuth } from "@/lib/auth";
+import { endGuestMode, startGuestMode } from "@/lib/guest";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
@@ -34,6 +35,11 @@ function AuthPage() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    // Reaching the login page means the visitor is no longer browsing as a guest.
+    endGuestMode();
+  }, []);
 
   useEffect(() => {
     if (session) void navigate({ to: "/dashboard", replace: true });
@@ -190,6 +196,29 @@ function AuthPage() {
             {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
           </button>
         </form>
+
+        <div className="flex items-center gap-3">
+          <span className="h-px flex-1 bg-border" />
+          <span className="text-xs uppercase tracking-wider text-muted-foreground">or</span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => {
+              startGuestMode();
+              void navigate({ to: "/dashboard" });
+            }}
+            className="w-full justify-center rounded-lg border border-primary/40 bg-transparent px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+          >
+            Continue as Guest
+          </button>
+          <p className="text-center text-xs text-muted-foreground">
+            Look around with sample data. Saving expenses, budgets, goals and account history stays
+            locked until you sign in.
+          </p>
+        </div>
 
         <p className="text-center text-xs text-muted-foreground">
           Passwords are stored securely as one-way hashes; sessions use signed tokens.
