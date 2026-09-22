@@ -41,25 +41,34 @@ function RemindersPage() {
         subtitle="Bill payments, transfers, renewals — keep them off your mind and on the list."
       />
 
-      <Card>
-        <form onSubmit={add} className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
-          <input
-            className="field"
-            placeholder="e.g. Pay electricity bill"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-          />
-          <input
-            className="field"
-            type="date"
-            value={form.due}
-            onChange={(e) => setForm({ ...form, due: e.target.value })}
-          />
-          <button className="btn-primary" type="submit">
-            Add task
-          </button>
-        </form>
-      </Card>
+      {readOnly ? <GuestBanner /> : null}
+
+      {readOnly ? (
+        <LockedCard
+          title="Your reminder list is locked"
+          text="Sign in to keep your own bill reminders and tick them off."
+        />
+      ) : (
+        <Card>
+          <form onSubmit={add} className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
+            <input
+              className="field"
+              placeholder="e.g. Pay electricity bill"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+            />
+            <input
+              className="field"
+              type="date"
+              value={form.due}
+              onChange={(e) => setForm({ ...form, due: e.target.value })}
+            />
+            <button className="btn-primary" type="submit">
+              Add task
+            </button>
+          </form>
+        </Card>
+      )}
 
       <Card>
         <h2 className="mb-4 text-lg font-semibold">Open ({open.length})</h2>
