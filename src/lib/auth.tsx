@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 
 import { supabase } from "@/integrations/supabase/client";
 import { clearFinanceData, loadFinanceData } from "./finance";
+import { endGuestMode, restoreGuestMode } from "./guest";
 
 type AuthCtx = {
   session: Session | null;
@@ -29,13 +30,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!active) return;
       setSession(next);
       if (event === "SIGNED_OUT") clearFinanceData();
-      if (next?.user) void loadFinanceData(next.user.id);
+      if (next?.user) {
+        endGuestMode();
+        void loadFinanceData(next.user.id);
+      }
     });
 
     void supabase.auth.getSession().then(({ data }) => {
       if (!active) return;
       setSession(data.session);
-      if (data.session?.user) void loadFinanceData(data.session.user.id);
+      if (data.session?.user) {
+        endGuestMode();
+        void loadFinanceData(data.session.user.id);
+      } else {
+        restoreGuestMode();
+      }
       setLoading(false);
     });
 
@@ -63,6 +72,7 @@ export const useAuth = () => useContext(Ctx);
 
 /** Sign out safely: clear local data, end the session, and return home. */
 export async function signOutSafely() {
+  endGuestMode();
   clearFinanceData();
   await supabase.auth.signOut();
 }

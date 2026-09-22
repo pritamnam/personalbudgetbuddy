@@ -13,6 +13,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { AuthProvider, signOutSafely, useAuth } from "../lib/auth";
 import { CurrencyProvider, CurrencySelect } from "../lib/currency";
+import { endGuestMode, useGuestMode } from "../lib/guest";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -134,6 +135,7 @@ const NAV = [
 
 function SiteNav() {
   const { session, displayName, loading } = useAuth();
+  const guest = useGuestMode();
   const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
 
@@ -141,20 +143,25 @@ function SiteNav() {
     setSigningOut(true);
     try {
       await signOutSafely();
-      await navigate({ to: "/", replace: true });
+      await navigate({ to: "/auth", replace: true });
     } finally {
       setSigningOut(false);
     }
   }
 
+  const showApp = Boolean(session) || guest;
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
-        <Link to={session ? "/dashboard" : "/"} className="font-display text-lg font-semibold text-primary">
+        <Link
+          to={showApp ? "/dashboard" : "/auth"}
+          className="font-display text-lg font-semibold text-primary"
+        >
           SpendSmart
         </Link>
         <nav className="flex flex-1 flex-wrap items-center gap-1 text-sm">
-          {session
+          {showApp
             ? NAV.map((item) => (
                 <Link
                   key={item.to}
@@ -167,7 +174,7 @@ function SiteNav() {
               ))
             : null}
         </nav>
-        {session ? <CurrencySelect /> : null}
+        {showApp ? <CurrencySelect /> : null}
         {loading ? null : session ? (
           <div className="flex items-center gap-2 text-sm">
             <span className="hidden text-muted-foreground sm:inline">{displayName}</span>
@@ -176,9 +183,16 @@ function SiteNav() {
             </button>
           </div>
         ) : (
-          <Link to="/auth" className="btn-primary">
-            Sign in
-          </Link>
+          <div className="flex items-center gap-2 text-sm">
+            {guest ? (
+              <span className="hidden rounded-full border border-primary/40 px-2.5 py-0.5 text-xs font-medium text-primary sm:inline">
+                Guest mode
+              </span>
+            ) : null}
+            <Link to="/auth" className="btn-primary" onClick={() => endGuestMode()}>
+              {guest ? "Sign in / Sign up" : "Sign in"}
+            </Link>
+          </div>
         )}
       </div>
     </header>
