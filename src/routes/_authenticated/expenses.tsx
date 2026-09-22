@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
-import { Card, EmptyState, PageHeader } from "@/components/ui-kit";
+import { Card, EmptyState, GuestBanner, LockedCard, PageHeader } from "@/components/ui-kit";
 import { useCurrency } from "@/lib/currency";
+import { useGuestMode } from "@/lib/guest";
 import {
   CATEGORIES,
   useExpenses,
@@ -35,6 +36,7 @@ const emptyForm = {
 
 function ExpensesPage() {
   const { value: expenses, setValue: setExpenses } = useExpenses();
+  const readOnly = useGuestMode();
   const { format: currency, symbol } = useCurrency();
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -81,6 +83,14 @@ function ExpensesPage() {
         subtitle="Log what you spend and keep every category honest."
       />
 
+      {readOnly ? <GuestBanner /> : null}
+
+      {readOnly ? (
+        <LockedCard
+          title="Saving expenses is locked"
+          text="Create a free account to add, edit and delete your own expenses."
+        />
+      ) : (
       <Card>
         <h2 className="mb-4 text-lg font-semibold">
           {editingId ? "Edit expense" : "Add an expense"}
@@ -137,6 +147,7 @@ function ExpensesPage() {
           </div>
         </form>
       </Card>
+      )}
 
       <Card>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -170,17 +181,19 @@ function ExpensesPage() {
                   </p>
                 </div>
                 <span className="font-display text-lg font-semibold">{currency(e.amount)}</span>
-                <div className="flex gap-2">
-                  <button className="btn-ghost" onClick={() => edit(e)}>
-                    Edit
-                  </button>
-                  <button
-                    className="btn-ghost"
-                    onClick={() => setExpenses((prev) => prev.filter((x) => x.id !== e.id))}
-                  >
-                    Delete
-                  </button>
-                </div>
+                {readOnly ? null : (
+                  <div className="flex gap-2">
+                    <button className="btn-ghost" onClick={() => edit(e)}>
+                      Edit
+                    </button>
+                    <button
+                      className="btn-ghost"
+                      onClick={() => setExpenses((prev) => prev.filter((x) => x.id !== e.id))}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
