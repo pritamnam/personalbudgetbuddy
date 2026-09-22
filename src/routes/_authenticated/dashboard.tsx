@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useMemo } from "react";
 
-import { Card, PageHeader, Progress, StatCard, useHydrated } from "@/components/ui-kit";
+import { Card, GuestBanner, PageHeader, Progress, StatCard, useHydrated } from "@/components/ui-kit";
 import { useCurrency } from "@/lib/currency";
+import { useGuestMode } from "@/lib/guest";
 import {
   CATEGORIES,
   chartColors,
