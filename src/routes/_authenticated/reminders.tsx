@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { Card, EmptyState, PageHeader } from "@/components/ui-kit";
+import { Card, EmptyState, GuestBanner, LockedCard, PageHeader } from "@/components/ui-kit";
 import { uid, useTasks, type Task } from "@/lib/finance";
+import { useGuestMode } from "@/lib/guest";
 
 export const Route = createFileRoute("/_authenticated/reminders")({
   head: () => ({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/_authenticated/reminders")({
 
 function RemindersPage() {
   const { value: tasks, setValue: setTasks } = useTasks();
+  const readOnly = useGuestMode();
   const [form, setForm] = useState({ title: "", due: new Date().toISOString().slice(0, 10) });
 
   function add(event: React.FormEvent) {
