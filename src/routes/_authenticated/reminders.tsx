@@ -80,8 +80,9 @@ function RemindersPage() {
               <li key={t.id} className="flex items-center gap-3 py-3">
                 <input
                   type="checkbox"
-                  className="size-4 accent-[var(--color-primary)]"
+                  className="size-4 accent-[var(--color-primary)] disabled:opacity-60"
                   checked={t.done}
+                  disabled={readOnly}
                   onChange={() =>
                     setTasks((prev) =>
                       prev.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)),
@@ -97,12 +98,14 @@ function RemindersPage() {
                     {t.due < todayIso ? " · overdue" : ""}
                   </p>
                 </div>
-                <button
-                  className="btn-ghost"
-                  onClick={() => setTasks((prev) => prev.filter((x) => x.id !== t.id))}
-                >
-                  Delete
-                </button>
+                {readOnly ? null : (
+                  <button
+                    className="btn-ghost"
+                    onClick={() => setTasks((prev) => prev.filter((x) => x.id !== t.id))}
+                  >
+                    Delete
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -117,8 +120,9 @@ function RemindersPage() {
               <li key={t.id} className="flex items-center gap-3 py-3">
                 <input
                   type="checkbox"
-                  className="size-4 accent-[var(--color-primary)]"
+                  className="size-4 accent-[var(--color-primary)] disabled:opacity-60"
                   checked
+                  disabled={readOnly}
                   onChange={() =>
                     setTasks((prev) =>
                       prev.map((x) => (x.id === t.id ? { ...x, done: false } : x)),
@@ -126,12 +130,14 @@ function RemindersPage() {
                   }
                 />
                 <span className="flex-1 text-sm text-muted-foreground line-through">{t.title}</span>
-                <button
-                  className="btn-ghost"
-                  onClick={() => setTasks((prev) => prev.filter((x) => x.id !== t.id))}
-                >
-                  Delete
-                </button>
+                {readOnly ? null : (
+                  <button
+                    className="btn-ghost"
+                    onClick={() => setTasks((prev) => prev.filter((x) => x.id !== t.id))}
+                  >
+                    Delete
+                  </button>
+                )}
               </li>
             ))}
           </ul>
