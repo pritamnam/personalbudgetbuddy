@@ -49,6 +49,7 @@ const ChartFallback = () => (
 
 function Dashboard() {
   const hydrated = useHydrated();
+  const readOnly = useGuestMode();
   const { format: currency, code: currencyCode } = useCurrency();
   const { value: expenses } = useExpenses();
   const { value: budgets } = useBudgets();
@@ -97,11 +98,19 @@ function Dashboard() {
         title="Your money, this month"
         subtitle="A live view of spending, budgets, savings and the bills waiting on you."
         action={
-          <Link to="/expenses" className="btn-primary">
-            Add expense
-          </Link>
+          readOnly ? (
+            <Link to="/auth" className="btn-primary">
+              Sign up to save
+            </Link>
+          ) : (
+            <Link to="/expenses" className="btn-primary">
+              Add expense
+            </Link>
+          )
         }
       />
+
+      {readOnly ? <GuestBanner /> : null}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Spent this month" value={currency(spentThisMonth)} hint={`${monthExpenses.length} entries`} />
