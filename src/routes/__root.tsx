@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 
+import { FinanceNavigation } from "@/components/finance-navigation";
 import appCss from "../styles.css?url";
 import { AuthProvider, signOutSafely, useAuth } from "../lib/auth";
 import { CurrencyProvider, CurrencySelect } from "../lib/currency";
@@ -125,14 +126,6 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-const NAV = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/expenses", label: "Expenses" },
-  { to: "/budgets", label: "Budgets" },
-  { to: "/goals", label: "Goals" },
-  { to: "/reminders", label: "Reminders" },
-] as const;
-
 function SiteNav() {
   const { session, displayName, loading } = useAuth();
   const guest = useGuestMode();
@@ -153,28 +146,20 @@ function SiteNav() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 sm:px-6">
         <Link
           to={showApp ? "/dashboard" : "/auth"}
           className="font-display text-lg font-semibold text-primary"
         >
           SpendSmart
         </Link>
-        <nav className="flex flex-1 flex-wrap items-center gap-1 text-sm">
-          {showApp
-            ? NAV.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className="rounded-md px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  activeProps={{ className: "bg-secondary text-secondary-foreground" }}
-                >
-                  {item.label}
-                </Link>
-              ))
-            : null}
-        </nav>
-        {showApp ? <CurrencySelect /> : null}
+        <div className="flex-1" />
+        {showApp ? (
+          <div className="order-3 flex w-full items-center justify-end gap-2 lg:order-none lg:w-auto">
+            <CurrencySelect />
+            <FinanceNavigation />
+          </div>
+        ) : null}
         {loading ? null : session ? (
           <div className="flex items-center gap-2 text-sm">
             <span className="hidden text-muted-foreground sm:inline">{displayName}</span>
