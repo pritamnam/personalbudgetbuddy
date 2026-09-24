@@ -1,5 +1,5 @@
 # Roadmap
 
-- [ ] Add responsive navigation beside currency selection
-- [ ] Add dedicated Analytics page
-- [ ] Verify active states and mobile layout
+- [x] Add responsive navigation beside currency selection
+- [x] Add dedicated Analytics page
+- [x] Verify active states and mobile layout
