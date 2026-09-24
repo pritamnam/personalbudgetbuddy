@@ -16,6 +16,8 @@ export const Route = createFileRoute("/_authenticated/budgets")({
         property: "og:description",
         content: "Set monthly budgets per category and watch usage live.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: BudgetsPage,

@@ -16,6 +16,8 @@ export const Route = createFileRoute("/_authenticated/goals")({
         property: "og:description",
         content: "Define savings targets and track motivating progress.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: GoalsPage,

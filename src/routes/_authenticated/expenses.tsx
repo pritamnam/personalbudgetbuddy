@@ -22,6 +22,8 @@ export const Route = createFileRoute("/_authenticated/expenses")({
         property: "og:description",
         content: "Add, edit and delete daily expenses by category.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ExpensesPage,

@@ -20,6 +20,8 @@ export const Route = createFileRoute("/auth")({
         property: "og:description",
         content: "Create your SpendSmart account or sign in to reach your expenses, budgets and goals.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AuthPage,

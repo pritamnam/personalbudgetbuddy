@@ -38,6 +38,8 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
         content:
           "See spending by category, budget usage, savings progress and upcoming bills at a glance.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,

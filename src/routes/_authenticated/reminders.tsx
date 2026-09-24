@@ -12,6 +12,8 @@ export const Route = createFileRoute("/_authenticated/reminders")({
       { name: "description", content: "A simple to-do list for bills and money tasks." },
       { property: "og:title", content: "Reminders — SpendSmart" },
       { property: "og:description", content: "A simple to-do list for bills and money tasks." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: RemindersPage,
