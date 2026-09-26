@@ -3,6 +3,7 @@ import {
   BarChart3,
   Bell,
   LayoutDashboard,
+  LogIn,
   Menu,
   PiggyBank,
   ReceiptText,
@@ -27,7 +28,7 @@ const ITEMS = [
   { to: "/reminders", label: "Reminders", icon: Bell },
 ] as const;
 
-export function FinanceNavigation() {
+export function FinanceNavigation({ onLogIn }: { onLogIn?: () => void }) {
   const currentPath = useRouterState({ select: (router) => router.location.pathname });
   const isActive = (path: string) => currentPath === path;
   const activeItem = ITEMS.find((item) => isActive(item.to));
@@ -48,6 +49,7 @@ export function FinanceNavigation() {
             {item.label}
           </Link>
         ))}
+        {onLogIn && <Button type="button" variant="ghost" size="sm" onClick={onLogIn} className="text-muted-foreground">Log In</Button>}
       </nav>
 
       <DropdownMenu>
@@ -79,6 +81,7 @@ export function FinanceNavigation() {
               </Link>
             </DropdownMenuItem>
           ))}
+          {onLogIn && <DropdownMenuItem onSelect={onLogIn} className="cursor-pointer gap-3 px-2.5 py-2.5 font-medium"><LogIn aria-hidden="true" /><span>Log In</span></DropdownMenuItem>}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

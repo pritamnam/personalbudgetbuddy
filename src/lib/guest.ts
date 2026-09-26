@@ -37,8 +37,9 @@ export function isGuestMode() {
   }
 }
 
-/** Start exploring with sample data. Nothing is saved anywhere. */
+/** Start exploring with temporary data. Nothing is saved anywhere. */
 export function startGuestMode() {
+  if (guest) return;
   guest = true;
   try {
     window.sessionStorage.setItem(KEY, "1");
@@ -62,7 +63,7 @@ export function endGuestMode() {
   emit();
 }
 
-/** True while browsing as a guest (view-only, nothing saved). */
+/** True while browsing as a guest (temporary changes, nothing saved). */
 export function useGuestMode() {
   return useSyncExternalStore(
     subscribe,

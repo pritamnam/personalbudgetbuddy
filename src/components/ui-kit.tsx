@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 
 export function useHydrated() {
@@ -88,34 +87,6 @@ export function Progress({
         style={{ width: `${pct}%` }}
       />
     </div>
-  );
-}
-
-export function GuestBanner() {
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3 text-sm">
-      <p className="text-muted-foreground">
-        <span className="font-semibold text-primary">Guest mode</span> — you're viewing sample data.
-        Nothing you do here is saved.
-      </p>
-      <Link to="/auth" className="btn-primary">
-        Sign in to save
-      </Link>
-    </div>
-  );
-}
-
-export function LockedCard({ title, text }: { title: string; text: string }) {
-  return (
-    <Card className="flex flex-wrap items-center justify-between gap-3 border-dashed">
-      <div>
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <p className="text-sm text-muted-foreground">{text}</p>
-      </div>
-      <Link to="/auth" className="btn-primary">
-        Sign in or sign up
-      </Link>
-    </Card>
   );
 }
 

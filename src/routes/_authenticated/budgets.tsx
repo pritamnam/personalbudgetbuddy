@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 
-import { Card, GuestBanner, PageHeader, Progress, StatCard } from "@/components/ui-kit";
+import { Card, PageHeader, Progress, StatCard } from "@/components/ui-kit";
 import { useCurrency } from "@/lib/currency";
-import { useGuestMode } from "@/lib/guest";
 import { CATEGORIES, monthKey, thisMonth, useBudgets, useExpenses } from "@/lib/finance";
 
 export const Route = createFileRoute("/_authenticated/budgets")({
@@ -27,7 +26,6 @@ function BudgetsPage() {
   const { value: budgets, setValue: setBudgets } = useBudgets();
   const { value: expenses } = useExpenses();
   const { format: currency, symbol } = useCurrency();
-  const readOnly = useGuestMode();
 
   const spentByCategory = useMemo(() => {
     const map = new Map<string, number>();
@@ -48,7 +46,6 @@ function BudgetsPage() {
         subtitle="Set a monthly ceiling per category. Bars turn amber near the limit and red once you pass it."
       />
 
-      {readOnly ? <GuestBanner /> : null}
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Monthly budget" value={currency(totalBudget)} />
@@ -78,12 +75,10 @@ function BudgetsPage() {
                 <label className="flex items-center gap-2 text-xs text-muted-foreground">
                   Monthly limit ({symbol})
                   <input
-                    className="field max-w-30 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="field max-w-30"
                     type="number"
                     min="0"
                     step="10"
-                    disabled={readOnly}
-                    title={readOnly ? "Sign in to set your own budgets" : undefined}
                     value={limit}
                     onChange={(e) => {
                       const next = Number(e.target.value) || 0;

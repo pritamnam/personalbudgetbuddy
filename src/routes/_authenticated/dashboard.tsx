@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useMemo } from "react";
 
-import { Card, GuestBanner, PageHeader, Progress, StatCard, useHydrated } from "@/components/ui-kit";
+import { Card, PageHeader, Progress, StatCard, useHydrated } from "@/components/ui-kit";
 import { useCurrency } from "@/lib/currency";
 import { useGuestMode } from "@/lib/guest";
 import {
@@ -99,20 +99,10 @@ function Dashboard() {
       <PageHeader
         title="Your money, this month"
         subtitle="A live view of spending, budgets, savings and the bills waiting on you."
-        action={
-          readOnly ? (
-            <Link to="/auth" className="btn-primary">
-              Sign up to save
-            </Link>
-          ) : (
-            <Link to="/expenses" className="btn-primary">
-              Add expense
-            </Link>
-          )
-        }
+        action={<Link to="/expenses" className="btn-primary">Add expense</Link>}
       />
 
-      {readOnly ? <GuestBanner /> : null}
+      {readOnly ? <p role="status" className="border-l-2 border-primary bg-primary/5 px-4 py-3 text-sm text-foreground">Using SpendSmart as a guest — create an account to avoid losing records.</p> : null}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Spent this month" value={currency(spentThisMonth)} hint={`${monthExpenses.length} entries`} />

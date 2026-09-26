@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { Card, EmptyState, GuestBanner, LockedCard, PageHeader } from "@/components/ui-kit";
+import { Card, EmptyState, PageHeader } from "@/components/ui-kit";
 import { uid, useTasks, type Task } from "@/lib/finance";
-import { useGuestMode } from "@/lib/guest";
 
 export const Route = createFileRoute("/_authenticated/reminders")({
   head: () => ({
@@ -21,7 +20,6 @@ export const Route = createFileRoute("/_authenticated/reminders")({
 
 function RemindersPage() {
   const { value: tasks, setValue: setTasks } = useTasks();
-  const readOnly = useGuestMode();
   const [form, setForm] = useState({ title: "", due: new Date().toISOString().slice(0, 10) });
 
   function add(event: React.FormEvent) {
@@ -43,14 +41,6 @@ function RemindersPage() {
         subtitle="Bill payments, transfers, renewals — keep them off your mind and on the list."
       />
 
-      {readOnly ? <GuestBanner /> : null}
-
-      {readOnly ? (
-        <LockedCard
-          title="Your reminder list is locked"
-          text="Sign in to keep your own bill reminders and tick them off."
-        />
-      ) : (
         <Card>
           <form onSubmit={add} className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
             <input
@@ -70,7 +60,6 @@ function RemindersPage() {
             </button>
           </form>
         </Card>
-      )}
 
       <Card>
         <h2 className="mb-4 text-lg font-semibold">Open ({open.length})</h2>
@@ -82,9 +71,8 @@ function RemindersPage() {
               <li key={t.id} className="flex items-center gap-3 py-3">
                 <input
                   type="checkbox"
-                  className="size-4 accent-[var(--color-primary)] disabled:opacity-60"
+                  className="size-4 accent-[var(--color-primary)]"
                   checked={t.done}
-                  disabled={readOnly}
                   onChange={() =>
                     setTasks((prev) =>
                       prev.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)),
@@ -100,14 +88,12 @@ function RemindersPage() {
                     {t.due < todayIso ? " · overdue" : ""}
                   </p>
                 </div>
-                {readOnly ? null : (
                   <button
                     className="btn-ghost"
                     onClick={() => setTasks((prev) => prev.filter((x) => x.id !== t.id))}
                   >
                     Delete
                   </button>
-                )}
               </li>
             ))}
           </ul>
@@ -122,9 +108,8 @@ function RemindersPage() {
               <li key={t.id} className="flex items-center gap-3 py-3">
                 <input
                   type="checkbox"
-                  className="size-4 accent-[var(--color-primary)] disabled:opacity-60"
+                   className="size-4 accent-[var(--color-primary)]"
                   checked
-                  disabled={readOnly}
                   onChange={() =>
                     setTasks((prev) =>
                       prev.map((x) => (x.id === t.id ? { ...x, done: false } : x)),
@@ -132,14 +117,12 @@ function RemindersPage() {
                   }
                 />
                 <span className="flex-1 text-sm text-muted-foreground line-through">{t.title}</span>
-                {readOnly ? null : (
                   <button
                     className="btn-ghost"
                     onClick={() => setTasks((prev) => prev.filter((x) => x.id !== t.id))}
                   >
                     Delete
                   </button>
-                )}
               </li>
             ))}
           </ul>
