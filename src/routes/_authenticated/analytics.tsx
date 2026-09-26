@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense, useMemo } from "react";
 
-import { Card, GuestBanner, PageHeader, StatCard, useHydrated } from "@/components/ui-kit";
+import { Card, PageHeader, StatCard, useHydrated } from "@/components/ui-kit";
 import { useCurrency } from "@/lib/currency";
 import { CATEGORIES, chartColors, monthKey, thisMonth, useBudgets, useExpenses } from "@/lib/finance";
-import { useGuestMode } from "@/lib/guest";
 
 const CategoryPie = lazy(() =>
   import("@/components/charts").then((module) => ({ default: module.CategoryPie })),
@@ -36,7 +35,6 @@ function ChartFallback() {
 
 function AnalyticsPage() {
   const hydrated = useHydrated();
-  const readOnly = useGuestMode();
   const { format: currency, code: currencyCode } = useCurrency();
   const { value: expenses } = useExpenses();
   const { value: budgets } = useBudgets();
@@ -82,7 +80,6 @@ function AnalyticsPage() {
         title="Financial analytics"
         subtitle="Compare this month’s spending, category mix and six-month trend."
       />
-      {readOnly ? <GuestBanner /> : null}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Monthly spend" value={currency(spentThisMonth)} />

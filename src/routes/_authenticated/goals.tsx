@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { Card, EmptyState, GuestBanner, LockedCard, PageHeader, Progress } from "@/components/ui-kit";
+import { Card, EmptyState, PageHeader, Progress } from "@/components/ui-kit";
 import { useCurrency } from "@/lib/currency";
-import { useGuestMode } from "@/lib/guest";
 import { uid, useGoals, type Goal } from "@/lib/finance";
 
 export const Route = createFileRoute("/_authenticated/goals")({
@@ -34,7 +33,6 @@ function cheer(pct: number) {
 function GoalsPage() {
   const { value: goals, setValue: setGoals } = useGoals();
   const { format: currency, symbol } = useCurrency();
-  const readOnly = useGuestMode();
   const [form, setForm] = useState({ name: "", target: "", saved: "", deadline: "" });
 
   function addGoal(event: React.FormEvent) {
@@ -62,14 +60,6 @@ function GoalsPage() {
     <div className="space-y-8">
       <PageHeader title="Savings goals" subtitle="Name the thing you are saving for, then chip away at it." />
 
-      {readOnly ? <GuestBanner /> : null}
-
-      {readOnly ? (
-        <LockedCard
-          title="Savings goals are locked"
-          text="Sign in to set your own targets and track deposits over time."
-        />
-      ) : (
       <Card>
         <h2 className="mb-4 text-lg font-semibold">New goal</h2>
         <form onSubmit={addGoal} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -106,7 +96,6 @@ function GoalsPage() {
           </button>
         </form>
       </Card>
-      )}
 
       {goals.length === 0 ? (
         <EmptyState text="No savings goals yet." />
@@ -130,7 +119,6 @@ function GoalsPage() {
                 </div>
                 <Progress value={pct} tone={pct >= 100 ? "success" : "primary"} />
                 <p className="text-sm text-muted-foreground">{cheer(pct)}</p>
-                {readOnly ? null : (
                   <div className="flex flex-wrap gap-2">
                     <button className="btn-ghost" onClick={() => deposit(g.id, 50)}>
                       + {symbol}50
@@ -148,7 +136,6 @@ function GoalsPage() {
                       Delete
                     </button>
                   </div>
-                )}
               </Card>
             );
           })}
