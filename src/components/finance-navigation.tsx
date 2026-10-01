@@ -28,7 +28,7 @@ const ITEMS = [
   { to: "/reminders", label: "Reminders", icon: Bell },
 ] as const;
 
-export function FinanceNavigation({ onLogIn }: { onLogIn?: () => void }) {
+export function FinanceNavigation({ onLogIn }: { onLogIn?: (() => void) | undefined }) {
   const currentPath = useRouterState({ select: (router) => router.location.pathname });
   const isActive = (path: string) => currentPath === path;
   const activeItem = ITEMS.find((item) => isActive(item.to));

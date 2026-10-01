@@ -18,11 +18,7 @@ function subscribe(listener: () => void) {
 /** Restore a guest session on page load (browser only). */
 export function restoreGuestMode() {
   try {
-    if (window.sessionStorage.getItem(KEY) === "1") {
-      guest = true;
-      startGuestData();
-      emit();
-    }
+    if (window.sessionStorage.getItem(KEY) === "1") startGuestMode();
   } catch {
     /* ignore */
   }

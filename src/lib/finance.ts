@@ -127,6 +127,7 @@ async function save() {
 function scheduleSave() {
   if (!currentUserId) return;
   if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = undefined;
   saveTimer = setTimeout(() => {
     void save();
   }, 400);
@@ -174,6 +175,7 @@ export async function loadFinanceData(userId: string) {
  */
 export function startGuestData() {
   if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = undefined;
   currentUserId = null;
   state = seedData();
   ready = true;
@@ -183,6 +185,7 @@ export function startGuestData() {
 /** Drop in-memory data on sign-out. */
 export function clearFinanceData() {
   if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = undefined;
   currentUserId = null;
   state = seedData();
   ready = false;
