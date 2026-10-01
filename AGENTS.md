@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep guest finance changes in memory only and restore sample data on refresh; this permits full exploration without retaining personal records.
+- Open account sign-in and sign-up from the shared navigation dialog; this keeps the finance dashboard as the first screen.
