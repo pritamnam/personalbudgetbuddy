@@ -185,6 +185,7 @@ export function startGuestData() {
 /** Drop in-memory data on sign-out. */
 export function clearFinanceData() {
   if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = undefined;
   currentUserId = null;
   state = seedData();
   ready = false;
