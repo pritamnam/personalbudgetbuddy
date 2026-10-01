@@ -11,10 +11,12 @@ import {
 import { useEffect, useState, type ReactNode } from "react";
 
 import { FinanceNavigation } from "@/components/finance-navigation";
+import { AccountDialog } from "@/components/account-dialog";
+import { Button } from "@/components/ui/button";
 import appCss from "../styles.css?url";
 import { AuthProvider, signOutSafely, useAuth } from "../lib/auth";
 import { CurrencyProvider, CurrencySelect } from "../lib/currency";
-import { endGuestMode, useGuestMode } from "../lib/guest";
+import { startGuestMode } from "../lib/guest";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -128,59 +130,47 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function SiteNav() {
   const { session, displayName, loading } = useAuth();
-  const guest = useGuestMode();
   const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
 
   async function handleSignOut() {
     setSigningOut(true);
     try {
       await signOutSafely();
-      await navigate({ to: "/auth", replace: true });
+      startGuestMode();
+      await navigate({ to: "/dashboard", replace: true });
     } finally {
       setSigningOut(false);
     }
   }
 
-  const showApp = Boolean(session) || guest;
-
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
+    <><header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 sm:px-6">
         <Link
-          to={showApp ? "/dashboard" : "/auth"}
+          to="/dashboard"
           className="font-display text-lg font-semibold text-primary"
         >
           SpendSmart
         </Link>
         <div className="flex-1" />
-        {showApp ? (
           <div className="order-3 flex w-full items-center justify-end gap-2 lg:order-none lg:w-auto">
             <CurrencySelect />
-            <FinanceNavigation />
+            <FinanceNavigation onLogIn={session ? undefined : () => setAccountOpen(true)} />
           </div>
-        ) : null}
         {loading ? null : session ? (
           <div className="flex items-center gap-2 text-sm">
             <span className="hidden text-muted-foreground sm:inline">{displayName}</span>
-            <button type="button" className="btn-ghost" onClick={handleSignOut} disabled={signingOut}>
+            <Button type="button" variant="ghost" size="sm" onClick={handleSignOut} disabled={signingOut}>
               {signingOut ? "Signing out…" : "Sign out"}
-            </button>
+            </Button>
           </div>
         ) : (
-          <div className="flex items-center gap-2 text-sm">
-            {guest ? (
-              <span className="hidden rounded-full border border-primary/40 px-2.5 py-0.5 text-xs font-medium text-primary sm:inline">
-                Guest mode
-              </span>
-            ) : null}
-            <Link to="/auth" className="btn-primary" onClick={() => endGuestMode()}>
-              {guest ? "Sign in / Sign up" : "Sign in"}
-            </Link>
-          </div>
+          null
         )}
       </div>
-    </header>
+    </header><AccountDialog open={accountOpen} onOpenChange={setAccountOpen} /></>
   );
 }
 
@@ -198,7 +188,7 @@ function RootComponent() {
               <Outlet />
             </main>
             <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-              SpendSmart · private to your account
+              SpendSmart · Your money, your way
             </footer>
           </div>
         </CurrencyProvider>
