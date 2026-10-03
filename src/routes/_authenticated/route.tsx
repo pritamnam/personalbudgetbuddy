@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { startGuestMode } from "@/lib/guest";
 
 export const Route = createFileRoute("/_authenticated")({

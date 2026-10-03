@@ -1,6 +1,6 @@
 import { useCallback, useSyncExternalStore } from "react";
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 
 export const CATEGORIES = [
   "Food",
@@ -39,7 +39,10 @@ export type Task = {
   done: boolean;
 };
 
-export const uid = () => Math.random().toString(36).slice(2, 10);
+export const uid = (): string =>
+  typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : "xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx".replace(/x/g, () => Math.floor(Math.random() * 16).toString(16));
 
 const today = new Date();
 const iso = (d: Date) => d.toISOString().slice(0, 10);
@@ -111,57 +114,84 @@ function subscribe(listener: () => void) {
 }
 
 let saveTimer: ReturnType<typeof setTimeout> | undefined;
+let syncedExpenseIds = new Set<string>();
+
+const toRow = (e: Expense, userId: string) => ({
+  id: e.id,
+  user_id: userId,
+  amount: e.amount,
+  category: e.category,
+  note: e.title,
+  created_at: `${e.date}T12:00:00Z`,
+});
+
+type TxRow = { id: string; amount: number | string; category: string; note: string | null; created_at: string };
+const fromRow = (r: TxRow): Expense => ({
+  id: String(r.id),
+  title: r.note ?? "",
+  amount: Number(r.amount),
+  category: (CATEGORIES as readonly string[]).includes(r.category) ? (r.category as Category) : "Other",
+  date: r.created_at.slice(0, 10),
+});
 
 async function save() {
-  if (!currentUserId) return;
-  await supabase.from("finance_data").upsert({
-    user_id: currentUserId,
-    expenses: state.expenses,
+  const userId = currentUserId;
+  if (!userId) return;
+  const ids = new Set(state.expenses.map((e) => e.id));
+  const removed = [...syncedExpenseIds].filter((id) => !ids.has(id));
+  if (removed.length) {
+    const { error } = await supabase.from("transactions").delete().in("id", removed);
+    if (error) console.error("Delete transactions failed:", error.message);
+  }
+  if (state.expenses.length) {
+    const { error } = await supabase.from("transactions").upsert(state.expenses.map((e) => toRow(e, userId)));
+    if (error) console.error("Save transactions failed:", error.message);
+  }
+  syncedExpenseIds = ids;
+  const { error } = await supabase.from("finance_data").upsert({
+    user_id: userId,
     budgets: state.budgets,
     goals: state.goals,
     tasks: state.tasks,
     updated_at: new Date().toISOString(),
   });
+  if (error) console.error("Save finance data failed:", error.message);
 }
 
 function scheduleSave() {
   if (!currentUserId) return;
   if (saveTimer) clearTimeout(saveTimer);
-  saveTimer = undefined;
   saveTimer = setTimeout(() => {
     void save();
   }, 400);
 }
 
-/** Load the signed-in user's data from the cloud (seeding a fresh account). */
+/** Load the signed-in user's data from Supabase (seeding a fresh account). */
 export async function loadFinanceData(userId: string) {
   currentUserId = userId;
   ready = false;
   emit();
 
-  const { data } = await supabase
-    .from("finance_data")
-    .select("expenses, budgets, goals, tasks")
-    .eq("user_id", userId)
-    .maybeSingle();
+  const [tx, fd] = await Promise.all([
+    supabase.from("transactions").select("id, amount, category, note, created_at").eq("user_id", userId).order("created_at", { ascending: false }),
+    supabase.from("finance_data").select("budgets, goals, tasks").eq("user_id", userId).maybeSingle(),
+  ]);
+  if (tx.error) console.error("Load transactions failed:", tx.error.message);
+  if (fd.error) console.error("Load finance data failed:", fd.error.message);
 
-  const row = data as Partial<FinanceData> | null;
-  const isEmpty =
-    !row ||
-    ((row.expenses?.length ?? 0) === 0 &&
-      (row.budgets?.length ?? 0) === 0 &&
-      (row.goals?.length ?? 0) === 0 &&
-      (row.tasks?.length ?? 0) === 0);
+  const expenses = ((tx.data ?? []) as TxRow[]).map(fromRow);
+  const row = fd.data as Partial<FinanceData> | null;
+  syncedExpenseIds = new Set(expenses.map((e) => e.id));
 
-  if (isEmpty) {
+  if (!row && expenses.length === 0) {
     state = seedData();
     await save();
   } else {
     state = {
-      expenses: row.expenses ?? [],
-      budgets: row.budgets ?? [],
-      goals: row.goals ?? [],
-      tasks: row.tasks ?? [],
+      expenses,
+      budgets: row?.budgets?.length ? row.budgets : seedBudgets,
+      goals: row?.goals ?? [],
+      tasks: row?.tasks ?? [],
     };
   }
 
