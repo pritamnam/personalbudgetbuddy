@@ -1,7 +1,7 @@
 import type { Session, User } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { clearFinanceData, loadFinanceData } from "./finance";
 import { endGuestMode, restoreGuestMode } from "./guest";
 
