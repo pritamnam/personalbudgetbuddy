@@ -105,8 +105,8 @@ export function BudgetBars({
         data={{
           labels,
           datasets: [
-            { label: "Spent", data: spent, backgroundColor: "#2f7a6b", borderRadius: 6 },
-            { label: "Budget", data: limits, backgroundColor: "#e0a13c80", borderRadius: 6 },
+            { label: "Spent", data: spent, backgroundColor: "#2563eb", borderRadius: 6 },
+            { label: "Budget", data: limits, backgroundColor: "#14b8a680", borderRadius: 6 },
           ],
         }}
         options={{ ...base, plugins: moneyPlugins(currency), scales: moneyAxis(currency) }}
@@ -133,8 +133,8 @@ export function TrendLine({
             {
               label: "Monthly spend",
               data,
-              borderColor: "#2f7a6b",
-              backgroundColor: "#2f7a6b26",
+              borderColor: "#2563eb",
+              backgroundColor: "#2563eb26",
               fill: true,
               tension: 0.35,
               pointRadius: 4,
