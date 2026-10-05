@@ -11,6 +11,7 @@ import {
 import { useEffect, useState, type ReactNode } from "react";
 
 import { FinanceNavigation } from "@/components/finance-navigation";
+import { SettingsMenu, themeInitScript } from "@/components/settings-menu";
 import { AccountDialog } from "@/components/account-dialog";
 import { Button } from "@/components/ui/button";
 import appCss from "../styles.css?url";
@@ -116,8 +117,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />
       </head>
       <body>
@@ -157,6 +159,7 @@ function SiteNav() {
         <div className="flex-1" />
           <div className="order-3 flex w-full items-center justify-end gap-2 lg:order-none lg:w-auto">
             <CurrencySelect />
+            <SettingsMenu />
             <FinanceNavigation onLogIn={session ? undefined : () => setAccountOpen(true)} />
           </div>
         {loading ? null : session ? (
