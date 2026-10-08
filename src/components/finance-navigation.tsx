@@ -8,6 +8,8 @@ import {
   PiggyBank,
   ReceiptText,
   WalletCards,
+  Lightbulb,
+  Settings,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -20,12 +22,14 @@ import {
 import { cn } from "@/lib/utils";
 
 const ITEMS = [
+  { to: "/", label: "Advisory", icon: Lightbulb },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/expenses", label: "Expenses", icon: ReceiptText },
   { to: "/budgets", label: "Budgets", icon: WalletCards },
   { to: "/goals", label: "Savings Goals", icon: PiggyBank },
   { to: "/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/reminders", label: "Reminders", icon: Bell },
+  { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
 export function FinanceNavigation({ onLogIn }: { onLogIn?: (() => void) | undefined }) {
@@ -35,7 +39,7 @@ export function FinanceNavigation({ onLogIn }: { onLogIn?: (() => void) | undefi
 
   return (
     <>
-      <nav className="hidden items-center gap-1 lg:flex" aria-label="Finance sections">
+      <nav className="hidden items-center gap-1 2xl:flex" aria-label="Finance sections">
         {ITEMS.map((item) => (
           <Link
             key={item.to}
@@ -58,7 +62,7 @@ export function FinanceNavigation({ onLogIn }: { onLogIn?: (() => void) | undefi
             type="button"
             variant="outline"
             size="sm"
-            className="max-w-40 gap-2 lg:hidden"
+             className="max-w-40 gap-2 2xl:hidden"
             aria-label={`Open navigation menu${activeItem ? `, current section ${activeItem.label}` : ""}`}
           >
             <Menu aria-hidden="true" />

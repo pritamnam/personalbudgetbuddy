@@ -10,4 +10,6 @@
 <!-- LOVABLE:END -->
 
 - Keep guest finance changes in memory only and restore sample data on refresh; this permits full exploration without retaining personal records.
-- Open account sign-in and sign-up from the shared navigation dialog; this keeps the finance dashboard as the first screen.
+- Open account sign-in and sign-up from the shared navigation dialog; account access must not replace the home screen.
+- Keep appearance and in-app alert preferences in one shared browser-persisted provider; all preference controls must stay synchronized.
+- Render Advisory at the index route and keep preferences on a dedicated Settings route; distinct content remains directly shareable.
