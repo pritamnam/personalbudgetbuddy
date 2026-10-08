@@ -143,7 +143,7 @@ function SiteNav() {
     try {
       await signOutSafely();
       startGuestMode();
-      await navigate({ to: "/dashboard", replace: true });
+      await navigate({ to: "/", replace: true });
     } finally {
       setSigningOut(false);
     }
