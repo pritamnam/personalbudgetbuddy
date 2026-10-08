@@ -11,7 +11,9 @@ import {
 import { useEffect, useState, type ReactNode } from "react";
 
 import { FinanceNavigation } from "@/components/finance-navigation";
-import { SettingsMenu, themeInitScript } from "@/components/settings-menu";
+import { SettingsMenu } from "@/components/settings-menu";
+import { PreferencesProvider, themeInitScript } from "@/lib/preferences";
+import { ReminderNotice } from "@/components/reminder-notice";
 import { AccountDialog } from "@/components/account-dialog";
 import { Button } from "@/components/ui/button";
 import appCss from "../styles.css?url";
@@ -141,7 +143,7 @@ function SiteNav() {
     try {
       await signOutSafely();
       startGuestMode();
-      await navigate({ to: "/dashboard", replace: true });
+      await navigate({ to: "/", replace: true });
     } finally {
       setSigningOut(false);
     }
@@ -151,13 +153,13 @@ function SiteNav() {
     <><header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 sm:px-6">
         <Link
-          to="/dashboard"
+          to="/"
           className="font-display text-lg font-semibold text-primary"
         >
           SpendSmart
         </Link>
         <div className="flex-1" />
-          <div className="order-3 flex w-full items-center justify-end gap-2 lg:order-none lg:w-auto">
+          <div className="flex items-center justify-end gap-2">
             <CurrencySelect />
             <SettingsMenu />
             <FinanceNavigation onLogIn={session ? undefined : () => setAccountOpen(true)} />
@@ -184,16 +186,19 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <CurrencyProvider>
+          <PreferencesProvider>
           <div className="min-h-screen">
             <SiteNav />
             <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-              <Outlet />
+               <ReminderNotice />
+               <Outlet />
             </main>
             <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
               SpendSmart · Your money, your way
             </footer>
           </div>
+          </PreferencesProvider>
         </CurrencyProvider>
       </AuthProvider>
     </QueryClientProvider>
