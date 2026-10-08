@@ -5,6 +5,6 @@
 - [x] Replace standalone login page with Log In in the main menu and linked sign-up form
 - [x] Verify guest edits, account dialog, navigation, and build status
 
-- [ ] Replace the home redirect with Advisory content; keep Dashboard in navigation only
-- [ ] Add Settings in navigation and on home for currency, theme, and notifications
-- [ ] Verify home, menu navigation, preferences, and mobile layout
+- [x] Replace the home redirect with Advisory content; keep Dashboard in navigation only
+- [x] Add Settings in navigation and on home for currency, theme, and notifications
+- [x] Verify home, menu navigation, preferences, and mobile layout
