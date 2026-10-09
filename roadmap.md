@@ -8,3 +8,7 @@
 - [x] Replace the home redirect with Advisory content; keep Dashboard in navigation only
 - [x] Add Settings in navigation and on home for currency, theme, and notifications
 - [x] Verify home, menu navigation, preferences, and mobile layout
+
+- [ ] Add shared English, Marathi, Hindi, and Japanese language preferences and site-wide translations
+- [ ] Keep exactly one Settings menu entry and preserve Dashboard navigation
+- [ ] Verify language switching, persistence, page links, and small-screen layouts
