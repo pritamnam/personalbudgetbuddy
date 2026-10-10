@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/language";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -11,7 +12,6 @@ import {
 import { useEffect, useState, type ReactNode } from "react";
 
 import { FinanceNavigation } from "@/components/finance-navigation";
-import { SettingsMenu } from "@/components/settings-menu";
 import { PreferencesProvider, themeInitScript } from "@/lib/preferences";
 import { ReminderNotice } from "@/components/reminder-notice";
 import { AccountDialog } from "@/components/account-dialog";
@@ -23,20 +23,21 @@ import { startGuestMode } from "../lib/guest";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
+  const { t, m, locale, date } = useLanguage();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">{t("Page not found")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          {t("The page you're looking for doesn't exist or has been moved.")}
         </p>
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Go home
+            {t("Go home")}
           </Link>
         </div>
       </div>
@@ -45,6 +46,7 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
+  const { t, m, locale, date } = useLanguage();
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -55,10 +57,10 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+          {t("This page didn't load")}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          {t("Something went wrong on our end. You can try refreshing or head back home.")}
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -68,13 +70,13 @@ function ErrorComponent({ error, reset }: { error: unknown; reset: () => void })
             }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Try again
+            {t("Try again")}
           </button>
           <a
             href="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
-            Go home
+            {t("Go home")}
           </a>
         </div>
       </div>
@@ -106,7 +108,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
       },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
@@ -133,6 +135,7 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function SiteNav() {
+  const { t, m, locale, date } = useLanguage();
   const { session, displayName, loading } = useAuth();
   const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
@@ -161,14 +164,13 @@ function SiteNav() {
         <div className="flex-1" />
           <div className="flex items-center justify-end gap-2">
             <CurrencySelect />
-            <SettingsMenu />
             <FinanceNavigation onLogIn={session ? undefined : () => setAccountOpen(true)} />
           </div>
         {loading ? null : session ? (
           <div className="flex items-center gap-2 text-sm">
             <span className="hidden text-muted-foreground sm:inline">{displayName}</span>
             <Button type="button" variant="ghost" size="sm" onClick={handleSignOut} disabled={signingOut}>
-              {signingOut ? "Signing out…" : "Sign out"}
+              {signingOut ? t("Signing out…") : t("Sign out")}
             </Button>
           </div>
         ) : (
@@ -185,8 +187,8 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <CurrencyProvider>
-          <PreferencesProvider>
+        <PreferencesProvider>
+          <CurrencyProvider>
           <div className="min-h-screen">
             <SiteNav />
             <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
@@ -194,13 +196,16 @@ function RootComponent() {
                <ReminderNotice />
                <Outlet />
             </main>
-            <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-              SpendSmart · Your money, your way
-            </footer>
+            <SiteFooter />
           </div>
-          </PreferencesProvider>
-        </CurrencyProvider>
+          </CurrencyProvider>
+        </PreferencesProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function SiteFooter() {
+  const { t } = useLanguage();
+  return <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">{t("SpendSmart · Your money, your way")}</footer>;
 }

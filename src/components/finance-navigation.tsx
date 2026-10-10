@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/language";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   BarChart3,
@@ -33,13 +34,14 @@ const ITEMS = [
 ] as const;
 
 export function FinanceNavigation({ onLogIn }: { onLogIn?: (() => void) | undefined }) {
+  const { t } = useLanguage();
   const currentPath = useRouterState({ select: (router) => router.location.pathname });
   const isActive = (path: string) => currentPath === path;
   const activeItem = ITEMS.find((item) => isActive(item.to));
 
   return (
     <>
-      <nav className="hidden items-center gap-1 2xl:flex" aria-label="Finance sections">
+      <nav className="hidden items-center gap-1 2xl:flex" aria-label={t("Finance sections")}>
         {ITEMS.map((item) => (
           <Link
             key={item.to}
@@ -50,10 +52,10 @@ export function FinanceNavigation({ onLogIn }: { onLogIn?: (() => void) | undefi
               isActive(item.to) && "bg-secondary text-secondary-foreground",
             )}
           >
-            {item.label}
+            {t(item.label)}
           </Link>
         ))}
-        {onLogIn && <Button type="button" variant="ghost" size="sm" onClick={onLogIn} className="text-muted-foreground">Log In</Button>}
+        {onLogIn && <Button type="button" variant="ghost" size="sm" onClick={onLogIn} className="text-muted-foreground">{t("Log In")}</Button>}
       </nav>
 
       <DropdownMenu>
@@ -63,10 +65,10 @@ export function FinanceNavigation({ onLogIn }: { onLogIn?: (() => void) | undefi
             variant="outline"
             size="sm"
              className="max-w-40 gap-2 2xl:hidden"
-            aria-label={`Open navigation menu${activeItem ? `, current section ${activeItem.label}` : ""}`}
+            aria-label={`${t("Open navigation menu")}${activeItem ? `, ${t("Current section")}: ${t(activeItem.label)}` : ""}`}
           >
             <Menu aria-hidden="true" />
-            <span className="max-w-28 truncate">{activeItem?.label ?? "Menu"}</span>
+            <span className="max-w-28 truncate">{t(activeItem?.label ?? "Menu")}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56 p-1.5">
@@ -81,11 +83,11 @@ export function FinanceNavigation({ onLogIn }: { onLogIn?: (() => void) | undefi
                 )}
               >
                 <item.icon aria-hidden="true" />
-                <span>{item.label}</span>
+                <span>{t(item.label)}</span>
               </Link>
             </DropdownMenuItem>
           ))}
-          {onLogIn && <DropdownMenuItem onSelect={onLogIn} className="cursor-pointer gap-3 px-2.5 py-2.5 font-medium"><LogIn aria-hidden="true" /><span>Log In</span></DropdownMenuItem>}
+          {onLogIn && <DropdownMenuItem onSelect={onLogIn} className="cursor-pointer gap-3 px-2.5 py-2.5 font-medium"><LogIn aria-hidden="true" /><span>{t("Log In")}</span></DropdownMenuItem>}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

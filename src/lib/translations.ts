@@ -142,6 +142,8 @@ Spent|खर्च|खर्च|支出
 Budget|अंदाजपत्रक|बजट|予算
 Food|अन्न|भोजन|食費
 Transport|प्रवास|परिवहन|交通費
+Travel|प्रवास|यात्रा|旅行・交通費
+Bills|बिले|बिल|請求・固定費
 Housing|निवास|आवास|住居費
 Utilities|मूलभूत सेवा|उपयोगिताएँ|光熱費
 Shopping|खरेदी|ख़रीदारी|買い物
@@ -202,7 +204,7 @@ Close|बंद करा|बंद करें|閉じる
 `;
 export const translations: Record<string, Record<Exclude<Language, "en">, string>> = Object.fromEntries(
   rows.trim().split("\n").map((row) => {
-    const [key, mr, hi, ja] = row.split("|");
+    const [key = "", mr = "", hi = "", ja = ""] = row.split("|");
     return [key, { mr, hi, ja }];
   }),
 );
@@ -221,5 +223,5 @@ export function translate(language: Language, key: string): string {
 }
 export function message(language: Language, key: keyof typeof messages, values: Record<string, string | number>): string {
   const index = LANGUAGES.findIndex((item) => item.code === language);
-  return messages[key][index].replace(/\{(\w+)\}/g, (match, name: string) => String(values[name] ?? match));
+  return (messages[key][index] ?? messages[key][0]).replace(/\{(\w+)\}/g, (match, name: string) => String(values[name] ?? match));
 }

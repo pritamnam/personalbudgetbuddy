@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/language";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/budgets")({
 });
 
 function BudgetsPage() {
+  const { t, m, locale, date } = useLanguage();
   const { value: budgets, setValue: setBudgets } = useBudgets();
   const { value: expenses } = useExpenses();
   const { format: currency, symbol } = useCurrency();
@@ -33,7 +35,7 @@ function BudgetsPage() {
       .filter((e) => monthKey(e.date) === thisMonth)
       .forEach((e) => map.set(e.category, (map.get(e.category) ?? 0) + e.amount));
     return map;
-  }, [expenses]);
+  }, [expenses, locale]);
 
   const totalBudget = budgets.reduce((s, b) => s + b.limit, 0);
   const totalSpent = CATEGORIES.reduce((s, c) => s + (spentByCategory.get(c) ?? 0), 0);
@@ -42,16 +44,16 @@ function BudgetsPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Budget planning"
-        subtitle="Set a monthly ceiling per category. Bars turn amber near the limit and red once you pass it."
+        title={t("Budget planning")}
+        subtitle={t("Set a monthly ceiling per category. Bars turn amber near the limit and red once you pass it.")}
       />
 
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Monthly budget" value={currency(totalBudget)} />
-        <StatCard label="Spent this month" value={currency(totalSpent)} />
+        <StatCard label={t("Monthly budget")} value={currency(totalBudget)} />
+        <StatCard label={t("Spent this month")} value={currency(totalSpent)} />
         <StatCard
-          label="Remaining"
+          label={t("Remaining")}
           value={currency(remaining)}
           tone={remaining < 0 ? "negative" : "positive"}
         />
@@ -67,13 +69,13 @@ function BudgetsPage() {
             <div key={category} className="space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="font-medium">{category}</p>
+                  <p className="font-medium">{t(category)}</p>
                   <p className="text-xs text-muted-foreground">
-                    {currency(spent)} of {currency(limit)} · {Math.round(pct)}% used
+                    {m("usage", { amount: currency(limit), percent: Math.round(pct) })} · {currency(spent)}
                   </p>
                 </div>
                 <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                  Monthly limit ({symbol})
+                  {t("Monthly limit")} ({symbol})
                   <input
                     className="field max-w-30"
                     type="number"
