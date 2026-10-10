@@ -10,9 +10,9 @@ import { usePreferences, type Theme } from "@/lib/preferences";
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [
     { title: "Settings — SpendSmart" },
-    { name: "description", content: "Choose your currency, appearance and in-app reminder preferences in SpendSmart." },
+    { name: "description", content: "Choose English, Marathi, Hindi or Japanese, your currency, appearance and in-app reminder preferences in SpendSmart." },
     { property: "og:title", content: "Settings — SpendSmart" },
-    { property: "og:description", content: "Personalize your currency, theme and reminder notifications." },
+    { property: "og:description", content: "Personalize your language, currency, theme and reminder notifications." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: SettingsPage,

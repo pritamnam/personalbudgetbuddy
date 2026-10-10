@@ -202,7 +202,7 @@ Close|बंद करा|बंद करें|閉じる
 `;
 export const translations: Record<string, Record<Exclude<Language, "en">, string>> = Object.fromEntries(
   rows.trim().split("\n").map((row) => {
-    const [key, mr, hi, ja] = row.split("|");
+    const [key = "", mr = "", hi = "", ja = ""] = row.split("|");
     return [key, { mr, hi, ja }];
   }),
 );
@@ -221,5 +221,5 @@ export function translate(language: Language, key: string): string {
 }
 export function message(language: Language, key: keyof typeof messages, values: Record<string, string | number>): string {
   const index = LANGUAGES.findIndex((item) => item.code === language);
-  return messages[key][index].replace(/\{(\w+)\}/g, (match, name: string) => String(values[name] ?? match));
+  return (messages[key][index] ?? messages[key][0]).replace(/\{(\w+)\}/g, (match, name: string) => String(values[name] ?? match));
 }

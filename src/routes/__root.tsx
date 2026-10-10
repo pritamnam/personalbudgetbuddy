@@ -182,14 +182,13 @@ function SiteNav() {
 }
 
 function RootComponent() {
-  const { t, m, locale, date } = useLanguage();
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <CurrencyProvider>
-          <PreferencesProvider>
+        <PreferencesProvider>
+          <CurrencyProvider>
           <div className="min-h-screen">
             <SiteNav />
             <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
@@ -197,13 +196,16 @@ function RootComponent() {
                <ReminderNotice />
                <Outlet />
             </main>
-            <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-              {t("SpendSmart · Your money, your way")}
-            </footer>
+            <SiteFooter />
           </div>
-          </PreferencesProvider>
-        </CurrencyProvider>
+          </CurrencyProvider>
+        </PreferencesProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function SiteFooter() {
+  const { t } = useLanguage();
+  return <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">{t("SpendSmart · Your money, your way")}</footer>;
 }
