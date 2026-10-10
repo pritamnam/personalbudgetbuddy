@@ -34,7 +34,6 @@ const ITEMS = [
 ] as const;
 
 export function FinanceNavigation({ onLogIn }: { onLogIn?: (() => void) | undefined }) {
-  const { t, m, locale, date } = useLanguage();
   const { t } = useLanguage();
   const currentPath = useRouterState({ select: (router) => router.location.pathname });
   const isActive = (path: string) => currentPath === path;
@@ -69,7 +68,7 @@ export function FinanceNavigation({ onLogIn }: { onLogIn?: (() => void) | undefi
             aria-label={`${t("Open navigation menu")}${activeItem ? `, ${t("Current section")}: ${t(activeItem.label)}` : ""}`}
           >
             <Menu aria-hidden="true" />
-            <span className="max-w-28 truncate">{activeItem?.label ?? t("Menu")}</span>
+            <span className="max-w-28 truncate">{t(activeItem?.label ?? "Menu")}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56 p-1.5">

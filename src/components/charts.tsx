@@ -33,31 +33,31 @@ const base = {
   },
 };
 
-const fmt = (currency: string) => (n: number) =>
-  n.toLocaleString(undefined, {
+const fmt = (currency: string, locale: string) => (n: number) =>
+  n.toLocaleString(locale, {
     style: "currency",
     currency,
     maximumFractionDigits: currency === "JPY" ? 0 : 2,
   });
 
-const moneyPlugins = (currency: string) => ({
+const moneyPlugins = (currency: string, locale: string) => ({
   ...base.plugins,
   tooltip: {
     callbacks: {
       label: (ctx: { dataset: { label?: string | undefined }; parsed: { y?: number | null | undefined } | number }) => {
         const raw = typeof ctx.parsed === "number" ? ctx.parsed : (ctx.parsed.y ?? 0);
         const name = ctx.dataset.label ? `${ctx.dataset.label}: ` : "";
-        return `${name}${fmt(currency)(raw)}`;
+        return `${name}${fmt(currency, locale)(raw)}`;
       },
     },
   },
 });
 
-const moneyAxis = (currency: string) => ({
+const moneyAxis = (currency: string, locale: string) => ({
   y: {
     beginAtZero: true,
     grid: { color: "#0000000d" },
-    ticks: { callback: (v: string | number) => fmt(currency)(Number(v)) },
+    ticks: { callback: (v: string | number) => fmt(currency, locale)(Number(v)) },
   },
   x: { grid: { display: false } },
 });
@@ -73,16 +73,17 @@ export function CategoryPie({
   colors: string[];
   currency?: string;
 }) {
+  const { t, locale } = useLanguage();
   return (
     <div className="h-72">
       <Pie
         data={{
-          labels,
+          labels: labels.map(t),
           datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: "#ffffff" }],
         }}
         options={{
           ...base,
-          plugins: { ...moneyPlugins(currency), legend: { position: "right" as const } },
+          plugins: { ...moneyPlugins(currency, locale), legend: { position: "right" as const } },
         }}
       />
     </div>
@@ -105,13 +106,13 @@ export function BudgetBars({
     <div className="h-72">
       <Bar
         data={{
-          labels,
+          labels: labels.map(t),
           datasets: [
             { label: t("Spent"), data: spent, backgroundColor: "#2563eb", borderRadius: 6 },
             { label: t("Budget"), data: limits, backgroundColor: "#14b8a680", borderRadius: 6 },
           ],
         }}
-        options={{ ...base, plugins: moneyPlugins(currency), scales: moneyAxis(currency) }}
+        options={{ ...base, plugins: moneyPlugins(currency, locale), scales: moneyAxis(currency, locale) }}
       />
     </div>
   );
@@ -144,7 +145,7 @@ export function TrendLine({
             },
           ],
         }}
-        options={{ ...base, plugins: moneyPlugins(currency), scales: moneyAxis(currency) }}
+        options={{ ...base, plugins: moneyPlugins(currency, locale), scales: moneyAxis(currency, locale) }}
       />
     </div>
   );
