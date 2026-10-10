@@ -12,5 +12,6 @@
 - Keep guest finance changes in memory only and restore sample data on refresh; this permits full exploration without retaining personal records.
 - Open account sign-in and sign-up from the shared navigation dialog; account access must not replace the home screen.
 - Keep appearance and in-app alert preferences in one shared browser-persisted provider; all preference controls must stay synchronized.
+- Keep language in the shared preferences provider and translate presentation through explicit dictionaries; finance category keys and personal records must remain unchanged.
 - Render Advisory at the index route and keep preferences on a dedicated Settings route; distinct content remains directly shareable.
 - Pre-optimize the settings switch dependency and reject outdated optimized requests in Vite; open previews must not mix React module generations.
