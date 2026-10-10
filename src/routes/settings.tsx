@@ -37,7 +37,7 @@ function SettingsPage() {
       </section>
       <section className="py-8">
         <h2 className="font-sans text-lg font-semibold">{t("Appearance")}</h2><p className="mt-2 text-sm text-muted-foreground">{t("Light, dark, or matched to your device.")}</p>
-        <div role="group" aria-label={t("Theme")} className="mt-5 grid max-w-md grid-cols-3 gap-2">{THEMES.map(({ value, label, icon: Icon }) => <Button key={value} variant={theme === value ? "secondary" : "outline"} aria-pressed={theme === value} onClick={() => setTheme(value)} className="h-12 gap-2"><Icon /><span>{t(label)}</span></Button>)}</div>
+        <div role="group" aria-label={t("Theme")} className="mt-5 grid max-w-md grid-cols-3 gap-2">{THEMES.map(({ value, label, icon: Icon }) => <Button key={value} variant={theme === value ? "secondary" : "outline"} aria-pressed={theme === value} onClick={() => setTheme(value)} className="h-auto min-h-12 flex-col gap-1 px-2 py-2 whitespace-normal sm:flex-row sm:gap-2"><Icon /><span>{t(label)}</span></Button>)}</div>
       </section>
       <section className="flex items-start justify-between gap-5 py-8">
         <div><h2 className="flex items-center gap-2 font-sans text-lg font-semibold"><Bell className="size-5 text-primary" />{t("Notifications")}</h2><label htmlFor="reminder-notifications" className="mt-3 block text-sm font-medium">{t("Due reminder alerts")}</label><p className="mt-2 max-w-md text-sm text-muted-foreground">{t("Show due and overdue reminders while you’re using SpendSmart. No emails or background notifications.")}</p></div>
