@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/language";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { convertStoredAmounts } from "./finance";
@@ -125,15 +126,16 @@ export function useCurrency() {
 }
 
 export function CurrencySelect({ className = "" }: { className?: string }) {
+  const { t, m, locale, date } = useLanguage();
   const { code, setCode, ratesLoading, liveRates } = useCurrency();
   return (
     <label className={`flex items-center gap-2 text-xs text-muted-foreground ${className}`}>
-      <span className="sr-only sm:not-sr-only">Currency</span>
+      <span className="sr-only sm:not-sr-only">{t("Currency")}</span>
       <select
         className="field max-w-40 py-1.5 text-sm"
         value={code}
         onChange={(e) => setCode(e.target.value as CurrencyCode)}
-        aria-label="Preferred currency"
+        aria-label={t("Preferred currency")}
         disabled={ratesLoading}
       >
         {CURRENCIES.map((c) => (
@@ -144,7 +146,7 @@ export function CurrencySelect({ className = "" }: { className?: string }) {
       </select>
       <span
         className={`hidden size-1.5 rounded-full sm:inline-block ${ratesLoading ? "animate-pulse bg-muted-foreground" : liveRates ? "bg-emerald-500" : "bg-amber-500"}`}
-        title={ratesLoading ? "Loading live exchange rates…" : liveRates ? "Live exchange rates" : "Offline — using approximate rates"}
+        title={ratesLoading ? t("Loading live exchange rates…") : liveRates ? t("Live exchange rates") : t("Offline — using approximate rates")}
       />
     </label>
   );

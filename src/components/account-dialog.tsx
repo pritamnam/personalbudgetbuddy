@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/language";
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -16,6 +17,7 @@ const TITLES: Record<Mode, [string, string]> = {
 };
 
 export function AccountDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const { t, m, locale, date } = useLanguage();
   const navigate = useNavigate();
   const { session } = useAuth();
   const [mode, setMode] = useState<Mode>("signin");
@@ -59,7 +61,7 @@ export function AccountDialog({ open, onOpenChange }: { open: boolean; onOpenCha
     setCode("");
     setNewPassword("");
     setMode("forgot_verify");
-    setNotice(`We sent a verification code to ${email.trim()}.`);
+    setNotice(m("codeSent", { email: email.trim() }));
   }
 
   async function submitForgotVerify() {
@@ -170,63 +172,63 @@ export function AccountDialog({ open, onOpenChange }: { open: boolean; onOpenCha
     <Dialog open={open && (!session || resetting)} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display text-2xl">{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogTitle className="font-display text-2xl">{t(title)}</DialogTitle>
+          <DialogDescription>{t(description)}</DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4 pt-2">
           {mode === "signup" && (
             <div className="space-y-1.5">
-              <label htmlFor="account-name" className="text-sm font-medium">Name</label>
-              <input id="account-name" className="field" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" />
+              <label htmlFor="account-name" className="text-sm font-medium">{t("Name")}</label>
+              <input id="account-name" className="field" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder={t("Your name")} />
             </div>
           )}
           {mode !== "forgot_verify" && (
             <div className="space-y-1.5">
-              <label htmlFor="account-email" className="text-sm font-medium">Email</label>
+              <label htmlFor="account-email" className="text-sm font-medium">{t("Email")}</label>
               <input id="account-email" type="email" className="field" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" />
             </div>
           )}
           {(mode === "signin" || mode === "signup") && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="account-password" className="text-sm font-medium">Password</label>
+                <label htmlFor="account-password" className="text-sm font-medium">{t("Password")}</label>
                 {mode === "signin" && (
-                  <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => switchMode("forgot_request")}>Forgot password?</Button>
+                  <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => switchMode("forgot_request")}>{t("Forgot password?")}</Button>
                 )}
               </div>
-              <input id="account-password" type="password" className="field" autoComplete={mode === "signin" ? "current-password" : "new-password"} required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 6 characters" />
+              <input id="account-password" type="password" className="field" autoComplete={mode === "signin" ? "current-password" : "new-password"} required value={password} onChange={(event) => setPassword(event.target.value)} placeholder={t("At least 6 characters")} />
             </div>
           )}
           {mode === "forgot_verify" && (
             <>
               <div className="space-y-1.5">
-                <label htmlFor="account-code" className="text-sm font-medium">Verification code</label>
+                <label htmlFor="account-code" className="text-sm font-medium">{t("Verification code")}</label>
                 <input id="account-code" inputMode="numeric" autoComplete="one-time-code" maxLength={10} className="field text-center font-mono text-lg tracking-[0.4em]" required value={code} onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))} placeholder="123456" />
               </div>
               <div className="space-y-1.5">
-                <label htmlFor="account-new-password" className="text-sm font-medium">New password</label>
-                <input id="account-new-password" type="password" className="field" autoComplete="new-password" required value={newPassword} onChange={(event) => setNewPassword(event.target.value)} placeholder="At least 6 characters" />
+                <label htmlFor="account-new-password" className="text-sm font-medium">{t("New password")}</label>
+                <input id="account-new-password" type="password" className="field" autoComplete="new-password" required value={newPassword} onChange={(event) => setNewPassword(event.target.value)} placeholder={t("At least 6 characters")} />
               </div>
             </>
           )}
-          {error && <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>}
-          {notice && <p role="status" className="rounded-md bg-secondary px-3 py-2 text-sm text-secondary-foreground">{notice}</p>}
-          <Button type="submit" className="w-full" disabled={busy}>{busy ? "Please wait…" : submitLabel}</Button>
+          {error && <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{t(error)}</p>}
+          {notice && <p role="status" className="rounded-md bg-secondary px-3 py-2 text-sm text-secondary-foreground">{t(notice)}</p>}
+          <Button type="submit" className="w-full" disabled={busy}>{busy ? t("Please wait…") : t(submitLabel)}</Button>
         </form>
         <p className="text-center text-xs text-muted-foreground">
           {mode === "signin" && (
-            <>New to SpendSmart? <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => switchMode("signup")}>Sign up here</Button></>
+            <>{t("New to SpendSmart?")} <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => switchMode("signup")}>{t("Sign up here")}</Button></>
           )}
           {mode === "signup" && (
-            <>Already have an account? <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => switchMode("signin")}>Log in</Button></>
+            <>{t("Already have an account?")} <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => switchMode("signin")}>{t("Log in")}</Button></>
           )}
           {mode === "forgot_request" && (
-            <>Remembered it? <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => switchMode("signin")}>Back to Log In</Button></>
+            <>{t("Remembered it?")} <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => switchMode("signin")}>{t("Back to Log In")}</Button></>
           )}
           {mode === "forgot_verify" && (
             <span className="flex flex-wrap items-center justify-center gap-x-3">
-              <Button type="button" variant="link" className="h-auto p-0 text-xs" disabled={busy || cooldown > 0} onClick={resend}>{cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}</Button>
-              <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => switchMode("signin")}>Back to Log In</Button>
+              <Button type="button" variant="link" className="h-auto p-0 text-xs" disabled={busy || cooldown > 0} onClick={resend}>{cooldown > 0 ? m("resendIn", { seconds: cooldown }) : t("Resend code")}</Button>
+              <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => switchMode("signin")}>{t("Back to Log In")}</Button>
             </span>
           )}
         </p>

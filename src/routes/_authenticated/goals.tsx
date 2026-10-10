@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/language";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -31,6 +32,7 @@ function cheer(pct: number) {
 }
 
 function GoalsPage() {
+  const { t, m, locale, date } = useLanguage();
   const { value: goals, setValue: setGoals } = useGoals();
   const { format: currency, symbol } = useCurrency();
   const [form, setForm] = useState({ name: "", target: "", saved: "", deadline: "" });
@@ -58,14 +60,14 @@ function GoalsPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Savings goals" subtitle="Name the thing you are saving for, then chip away at it." />
+      <PageHeader title={t("Savings goals")} subtitle={t("Name the thing you are saving for, then chip away at it.")} />
 
       <Card>
-        <h2 className="mb-4 text-lg font-semibold">New goal</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t("New goal")}</h2>
         <form onSubmit={addGoal} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <input
             className="field lg:col-span-2"
-            placeholder="Goal name"
+            placeholder={t("Goal name")}
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
@@ -73,7 +75,7 @@ function GoalsPage() {
             className="field"
             type="number"
             min="0"
-            placeholder={`Target (${symbol})`}
+            placeholder={`${t("Target")} (${symbol})`}
             value={form.target}
             onChange={(e) => setForm({ ...form, target: e.target.value })}
           />
@@ -81,7 +83,7 @@ function GoalsPage() {
             className="field"
             type="number"
             min="0"
-            placeholder="Already saved"
+            placeholder={t("Already saved")}
             value={form.saved}
             onChange={(e) => setForm({ ...form, saved: e.target.value })}
           />
@@ -92,13 +94,13 @@ function GoalsPage() {
             onChange={(e) => setForm({ ...form, deadline: e.target.value })}
           />
           <button type="submit" className="btn-primary sm:col-span-2 lg:col-span-1">
-            Add goal
+            {t("Add goal")}
           </button>
         </form>
       </Card>
 
       {goals.length === 0 ? (
-        <EmptyState text="No savings goals yet." />
+        <EmptyState text={t("No savings goals yet.")} />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {goals.map((g) => {
@@ -109,8 +111,8 @@ function GoalsPage() {
                   <div>
                     <h3 className="text-lg font-semibold">{g.name}</h3>
                     <p className="text-xs text-muted-foreground">
-                      {currency(g.saved)} of {currency(g.target)}
-                      {g.deadline ? ` · by ${g.deadline}` : ""}
+                      {m("progress", {saved: currency(g.saved), target: currency(g.target)})}
+                      {g.deadline ? ` · ${m("deadline", {date: date(g.deadline)})}` : ""}
                     </p>
                   </div>
                   <span className="font-display text-xl font-semibold text-primary">
@@ -118,7 +120,7 @@ function GoalsPage() {
                   </span>
                 </div>
                 <Progress value={pct} tone={pct >= 100 ? "success" : "primary"} />
-                <p className="text-sm text-muted-foreground">{cheer(pct)}</p>
+                <p className="text-sm text-muted-foreground">{t(cheer(pct))}</p>
                   <div className="flex flex-wrap gap-2">
                     <button className="btn-ghost" onClick={() => deposit(g.id, 50)}>
                       + {symbol}50
@@ -133,7 +135,7 @@ function GoalsPage() {
                       className="btn-ghost"
                       onClick={() => setGoals((prev) => prev.filter((x) => x.id !== g.id))}
                     >
-                      Delete
+                      {t("Delete")}
                     </button>
                   </div>
               </Card>

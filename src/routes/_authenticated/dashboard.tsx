@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/language";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useMemo } from "react";
 
@@ -50,6 +51,7 @@ const ChartFallback = () => (
 );
 
 function Dashboard() {
+  const { t, m, locale, date } = useLanguage();
   const hydrated = useHydrated();
   const readOnly = useGuestMode();
   const { format: currency, code: currencyCode } = useCurrency();
@@ -86,10 +88,10 @@ function Dashboard() {
       months.push(d.toISOString().slice(0, 7));
     }
     return months.map((m) => ({
-      label: new Date(`${m}-01`).toLocaleDateString(undefined, { month: "short" }),
+      label: new Date(`${m}-01`).toLocaleDateString(locale, { month: "short" }),
       total: expenses.filter((e) => monthKey(e.date) === m).reduce((s, e) => s + e.amount, 0),
     }));
-  }, [expenses]);
+  }, [expenses, locale]);
 
   const pieRows = byCategory.filter((r) => r.spent > 0);
   const budgetUsage = totalBudget > 0 ? (spentThisMonth / totalBudget) * 100 : 0;
@@ -97,32 +99,32 @@ function Dashboard() {
   return (
     <div className="space-y-10">
       <PageHeader
-        title="Your money, this month"
-        subtitle="A live view of spending, budgets, savings and the bills waiting on you."
-        action={<Link to="/expenses" className="btn-primary">Add expense</Link>}
+        title={t("Your money, this month")}
+        subtitle={t("A live view of spending, budgets, savings and the bills waiting on you.")}
+        action={<Link to="/expenses" className="btn-primary">{t("Add expense")}</Link>}
       />
 
-      {readOnly ? <p role="status" className="border-l-2 border-primary bg-primary/5 px-4 py-3 text-sm text-foreground">Using SpendSmart as a guest — create an account to avoid losing records.</p> : null}
+      {readOnly ? <p role="status" className="border-l-2 border-primary bg-primary/5 px-4 py-3 text-sm text-foreground">{t("Using SpendSmart as a guest — create an account to avoid losing records.")}</p> : null}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Spent this month" value={currency(spentThisMonth)} hint={`${monthExpenses.length} entries`} />
+        <StatCard label={t("Spent this month")} value={currency(spentThisMonth)} hint={m("entries", {count: monthExpenses.length})} />
         <StatCard
-          label="Budget left"
+          label={t("Budget left")}
           value={currency(totalBudget - spentThisMonth)}
-          hint={`${Math.round(budgetUsage)}% of ${currency(totalBudget)} used`}
+          hint={m("usage", {percent: Math.round(budgetUsage), amount: currency(totalBudget)})}
           tone={totalBudget - spentThisMonth < 0 ? "negative" : "positive"}
         />
         <StatCard
-          label="Saved so far"
+          label={t("Saved so far")}
           value={currency(savedTotal)}
-          hint={targetTotal ? `of ${currency(targetTotal)} in goals` : "no goals yet"}
+          hint={targetTotal ? m("goalTotal", {amount: currency(targetTotal)}) : "No goals yet."}
         />
-        <StatCard label="Open reminders" value={String(openTasks.length)} hint="bills & money tasks" />
+        <StatCard label={t("Open reminders")} value={String(openTasks.length)} hint={t("bills & money tasks")} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <h2 className="mb-4 text-lg font-semibold">Spending by category</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t("Spending by category")}</h2>
           {hydrated && pieRows.length > 0 ? (
             <Suspense fallback={<ChartFallback />}>
               <CategoryPie
@@ -138,7 +140,7 @@ function Dashboard() {
         </Card>
 
         <Card>
-          <h2 className="mb-4 text-lg font-semibold">Budget vs spend</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t("Budget vs spend")}</h2>
           {hydrated && byCategory.length > 0 ? (
             <Suspense fallback={<ChartFallback />}>
               <BudgetBars
@@ -155,7 +157,7 @@ function Dashboard() {
       </div>
 
       <Card>
-        <h2 className="mb-4 text-lg font-semibold">Six-month spending trend</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t("Six-month spending trend")}</h2>
         {hydrated ? (
           <Suspense fallback={<ChartFallback />}>
             <TrendLine
@@ -172,13 +174,13 @@ function Dashboard() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Savings goals</h2>
+            <h2 className="text-lg font-semibold">{t("Savings goals")}</h2>
             <Link to="/goals" className="btn-ghost">
-              Manage
+              {t("Manage")}
             </Link>
           </div>
           {goals.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No goals yet.</p>
+            <p className="text-sm text-muted-foreground">{t("No goals yet.")}</p>
           ) : (
             goals.slice(0, 3).map((g) => {
               const pct = g.target > 0 ? Math.min(100, (g.saved / g.target) * 100) : 0;
@@ -199,19 +201,19 @@ function Dashboard() {
 
         <Card className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Upcoming reminders</h2>
+            <h2 className="text-lg font-semibold">{t("Upcoming reminders")}</h2>
             <Link to="/reminders" className="btn-ghost">
-              Open list
+              {t("Open list")}
             </Link>
           </div>
           {openTasks.length === 0 ? (
-            <p className="text-sm text-muted-foreground">All caught up.</p>
+            <p className="text-sm text-muted-foreground">{t("All caught up.")}</p>
           ) : (
             <ul className="space-y-2">
               {openTasks.slice(0, 5).map((t) => (
                 <li key={t.id} className="flex items-center justify-between gap-3 text-sm">
                   <span className="font-medium">{t.title}</span>
-                  <span className="text-xs text-muted-foreground">{t.due}</span>
+                  <span className="text-xs text-muted-foreground">{date(t.due)}</span>
                 </li>
               ))}
             </ul>

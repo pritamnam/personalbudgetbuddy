@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/language";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
@@ -36,6 +37,7 @@ const emptyForm = {
 };
 
 function ExpensesPage() {
+  const { t, m, locale, date } = useLanguage();
   const { value: expenses, setValue: setExpenses } = useExpenses();
   const { format: currency, symbol } = useCurrency();
   const [form, setForm] = useState(emptyForm);
@@ -79,18 +81,18 @@ function ExpensesPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Expenses"
-        subtitle="Log what you spend and keep every category honest."
+        title={t("Expenses")}
+        subtitle={t("Log what you spend and keep every category honest.")}
       />
 
       <Card>
         <h2 className="mb-4 text-lg font-semibold">
-          {editingId ? "Edit expense" : "Add an expense"}
+          {editingId ? t("Edit expense") : t("Add an expense")}
         </h2>
         <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <input
             className="field lg:col-span-2"
-            placeholder="What did you buy?"
+            placeholder={t("What did you buy?")}
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
           />
@@ -99,7 +101,7 @@ function ExpensesPage() {
             type="number"
             min="0"
             step="0.01"
-            placeholder={`Amount (${symbol})`}
+            placeholder={`${t("Amount")} (${symbol})`}
             value={form.amount}
             onChange={(e) => setForm({ ...form, amount: e.target.value })}
           />
@@ -110,7 +112,7 @@ function ExpensesPage() {
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
-                {c}
+                {t(c)}
               </option>
             ))}
           </select>
@@ -122,7 +124,7 @@ function ExpensesPage() {
           />
           <div className="flex gap-2 sm:col-span-2 lg:col-span-5">
             <button type="submit" className="btn-primary">
-              {editingId ? "Save changes" : "Add expense"}
+              {editingId ? t("Save changes") : t("Add expense")}
             </button>
             {editingId ? (
               <button
@@ -133,7 +135,7 @@ function ExpensesPage() {
                   setForm(emptyForm);
                 }}
               >
-                Cancel
+                {t("Cancel")}
               </button>
             ) : null}
           </div>
@@ -143,24 +145,24 @@ function ExpensesPage() {
       <Card>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold">
-            {visible.length} entries · {currency(total)}
+            {m("entries", {count: visible.length})} · {currency(total)}
           </h2>
           <select
             className="field max-w-45"
             value={filter}
             onChange={(e) => setFilter(e.target.value as "All" | Category)}
           >
-            <option value="All">All categories</option>
+            <option value="All">{t("All categories")}</option>
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
-                {c}
+                {t(c)}
               </option>
             ))}
           </select>
         </div>
 
         {visible.length === 0 ? (
-          <EmptyState text="No expenses yet. Add your first one above." />
+          <EmptyState text={t("No expenses yet. Add your first one above.")} />
         ) : (
           <ul className="divide-y divide-border">
             {visible.map((e) => (
@@ -168,19 +170,19 @@ function ExpensesPage() {
                 <div className="min-w-40 flex-1">
                   <p className="font-medium">{e.title}</p>
                   <p className="text-xs text-muted-foreground">
-                    {e.category} · {e.date}
+                    {t(e.category)} · {date(e.date)}
                   </p>
                 </div>
                 <span className="font-display text-lg font-semibold">{currency(e.amount)}</span>
                   <div className="flex gap-2">
                     <button className="btn-ghost" onClick={() => edit(e)}>
-                      Edit
+                      {t("Edit")}
                     </button>
                     <button
                       className="btn-ghost"
                       onClick={() => setExpenses((prev) => prev.filter((x) => x.id !== e.id))}
                     >
-                      Delete
+                      {t("Delete")}
                     </button>
                   </div>
               </li>

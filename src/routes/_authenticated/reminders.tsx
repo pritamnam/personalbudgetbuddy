@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/language";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/reminders")({
 });
 
 function RemindersPage() {
+  const { t, m, locale, date } = useLanguage();
   const { value: tasks, setValue: setTasks } = useTasks();
   const [form, setForm] = useState({ title: "", due: new Date().toISOString().slice(0, 10) });
 
@@ -37,15 +39,15 @@ function RemindersPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Financial reminders"
-        subtitle="Bill payments, transfers, renewals — keep them off your mind and on the list."
+        title={t("Financial reminders")}
+        subtitle={t("Bill payments, transfers, renewals — keep them off your mind and on the list.")}
       />
 
         <Card>
           <form onSubmit={add} className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
             <input
               className="field"
-              placeholder="e.g. Pay electricity bill"
+              placeholder={t("e.g. Pay electricity bill")}
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
             />
@@ -56,15 +58,15 @@ function RemindersPage() {
               onChange={(e) => setForm({ ...form, due: e.target.value })}
             />
             <button className="btn-primary" type="submit">
-              Add task
+              {t("Add task")}
             </button>
           </form>
         </Card>
 
       <Card>
-        <h2 className="mb-4 text-lg font-semibold">Open ({open.length})</h2>
+        <h2 className="mb-4 text-lg font-semibold">{t("Open")} ({open.length})</h2>
         {open.length === 0 ? (
-          <EmptyState text="Nothing pending. Nice." />
+          <EmptyState text={t("Nothing pending. Nice.")} />
         ) : (
           <ul className="divide-y divide-border">
             {open.map((t) => (
@@ -84,15 +86,15 @@ function RemindersPage() {
                   <p
                     className={`text-xs ${t.due < todayIso ? "text-destructive" : "text-muted-foreground"}`}
                   >
-                    Due {t.due}
-                    {t.due < todayIso ? " · overdue" : ""}
+                    {t("Due")} {date(t.due)}
+                    {t.due < todayIso ? ` · ${t("Overdue")}` : ""}
                   </p>
                 </div>
                   <button
                     className="btn-ghost"
                     onClick={() => setTasks((prev) => prev.filter((x) => x.id !== t.id))}
                   >
-                    Delete
+                    {t("Delete")}
                   </button>
               </li>
             ))}
@@ -102,7 +104,7 @@ function RemindersPage() {
 
       {done.length > 0 ? (
         <Card>
-          <h2 className="mb-4 text-lg font-semibold">Completed ({done.length})</h2>
+          <h2 className="mb-4 text-lg font-semibold">{t("Completed")} ({done.length})</h2>
           <ul className="divide-y divide-border">
             {done.map((t) => (
               <li key={t.id} className="flex items-center gap-3 py-3">
@@ -121,7 +123,7 @@ function RemindersPage() {
                     className="btn-ghost"
                     onClick={() => setTasks((prev) => prev.filter((x) => x.id !== t.id))}
                   >
-                    Delete
+                    {t("Delete")}
                   </button>
               </li>
             ))}

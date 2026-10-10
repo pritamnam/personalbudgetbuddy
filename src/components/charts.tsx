@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/language";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -99,14 +100,15 @@ export function BudgetBars({
   limits: number[];
   currency?: string;
 }) {
+  const { t, m, locale, date } = useLanguage();
   return (
     <div className="h-72">
       <Bar
         data={{
           labels,
           datasets: [
-            { label: "Spent", data: spent, backgroundColor: "#2563eb", borderRadius: 6 },
-            { label: "Budget", data: limits, backgroundColor: "#14b8a680", borderRadius: 6 },
+            { label: t("Spent"), data: spent, backgroundColor: "#2563eb", borderRadius: 6 },
+            { label: t("Budget"), data: limits, backgroundColor: "#14b8a680", borderRadius: 6 },
           ],
         }}
         options={{ ...base, plugins: moneyPlugins(currency), scales: moneyAxis(currency) }}
@@ -124,6 +126,7 @@ export function TrendLine({
   data: number[];
   currency?: string;
 }) {
+  const { t, m, locale, date } = useLanguage();
   return (
     <div className="h-72">
       <Line
@@ -131,7 +134,7 @@ export function TrendLine({
           labels,
           datasets: [
             {
-              label: "Monthly spend",
+              label: t("Monthly spend"),
               data,
               borderColor: "#2563eb",
               backgroundColor: "#2563eb26",
